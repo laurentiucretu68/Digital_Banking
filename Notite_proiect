@@ -1,0 +1,28 @@
+****** Aplicatie de Banking *******
+
+ - > User: 
+ 	* Nume si prenume
+ 	* parola
+ 	* email
+ 	* telefon
+ 	* IBAN
+ 	* Data exp
+ 	* CIV
+ 	
+ - > Admin
+ 	* username
+ 	* email
+ 	* parola
+ 	
+ - > Interfata
+ 	* logare
+ 	* creare cont
+ 	
+ 	* panel user
+ 		* adaugare prieten
+ 		* stergere prieten
+ 		* trimitere bani
+ 	
+ 	* panel admin
+ 		* stergere user
+ 	
