@@ -4,6 +4,7 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include <time.h>
 #include <regex>
 #include "Admin.h"
 #include "rlutil.h"
@@ -26,10 +27,10 @@ class Interface{
 
     /// Validation methods for Signup
     static bool checkDuplicateEmail(const std::string&);
-    static bool checkPaternEmail(const std::string&);
-    static bool checkPaternPhone(const std::string&);
+    static bool checkPatternEmail(const std::string&);
+    static bool checkPatternPhone(const std::string&);
     static bool checkDuplicatePhone(const std::string&);
-    static bool checkPaternIBAN(const std::string&);
+    static bool checkPatternIBAN(const std::string&);
     static bool checkDuplicateIBAN(const std::string&);
 
     /// Main Panel methods
@@ -134,7 +135,7 @@ void Interface::signupProcess() {
     while (!cond){
         rlutil::setColor(2);
         std::cout<<"\n\tEmail: "; std::cin>>email;
-        if (checkPaternEmail(email)){
+        if (checkPatternEmail(email)){
             if (checkDuplicateEmail(email)){
                 cond = true;
             }
@@ -182,7 +183,7 @@ void Interface::signupProcess() {
     while (!cond){
         rlutil::setColor(2);
         std::cout<<"\n\tPhone Number (Format: 07********): "; std::cin>>phone;
-        if (checkPaternPhone(phone)){
+        if (checkPatternPhone(phone)){
             if (checkDuplicatePhone(phone))
                 cond = true;
             else{
@@ -202,7 +203,7 @@ void Interface::signupProcess() {
     while (!cond){
         rlutil::setColor(2);
         std::cout<<"\n\tIBAN (Example: RO35RZBR4421944568612335): "; std::cin>>IBAN;
-        if (checkPaternIBAN(IBAN)){
+        if (checkPatternIBAN(IBAN)){
             if (checkDuplicateIBAN(IBAN))
                 cond = true;
             else{
@@ -332,12 +333,12 @@ bool Interface::checkDuplicateIBAN(const std::string &IBAN) {
     return true;
 }
 
-bool Interface::checkPaternEmail(const std::string &email) {
+bool Interface::checkPatternEmail(const std::string &email) {
     const std::regex pattern("([a-z]+)([_.a-z0-9]*)([a-z0-9]+)(@)([a-z]+)([.a-z]+)([a-z]+)");
     return std::regex_match(email, pattern);
 }
 
-bool Interface::checkPaternPhone(const std::string &phone) {
+bool Interface::checkPatternPhone(const std::string &phone) {
     if (phone.length() != 10)
         return true;
 
@@ -345,7 +346,7 @@ bool Interface::checkPaternPhone(const std::string &phone) {
     return std::regex_match(phone, pattern);
 }
 
-bool Interface::checkPaternIBAN(const std::string &IBAN) {
+bool Interface::checkPatternIBAN(const std::string &IBAN) {
     if (IBAN.length() != 24)
         return true;
 
@@ -563,7 +564,9 @@ void Interface::panelUser(const User &user) {
                 return;
             }
             case 2: {
-                std::cout<<"Not implemented yet too :D\n";
+                unsigned int suma_tranzactie = User::makeTransaction(const_cast<User &>(user));
+                User::updateBalance("../txt_files/User/users.txt", user.getSuma() - suma_tranzactie, const_cast<User &>(user));
+                Interface::loginType1(user.getEmail());
                 return;
             }
             case 3: {
@@ -586,6 +589,48 @@ void Interface::panelUser(const User &user) {
             }
         }
     }
+}
+
+void User::updateBalance(const std::string &file_name, const unsigned int &suma_tranzactie, const User& user) {
+    std::fstream file1;
+    std::ofstream file2 ("../txt_files/User/temporary.txt");
+    file1.open("../txt_files/User/users.txt",std::fstream::in);
+    char line[500];
+    while (file1.getline(line,500)){
+        std::string copy = line;
+        char *p = strtok(line,";");
+        if (p == user.getNumePrenume()){
+            file2<<p<<";";
+            p = strtok(nullptr,";");
+
+            file2<<p<<";";
+            p = strtok(nullptr,";");
+
+            file2<<p<<";";
+            p = strtok(nullptr,";");
+
+            file2<<p<<";";
+            p = strtok(nullptr,";");
+
+            file2<<p<<";";
+            p = strtok(nullptr,";");
+
+            file2<<p<<";";
+            p = strtok(nullptr,";");
+
+            file2<<p<<";";
+            p = strtok(nullptr,";");
+
+            file2<<suma_tranzactie<<"\n";
+        }
+        else
+            file2<<copy<<'\n';
+    }
+
+    file1.close(); file2.close();
+    int result = remove("../txt_files/User/users.txt");
+    result = rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
+    result = remove("../txt_files/User/temporary.txt");
 }
 
 void User::showTransactionsHistory(User &user) {
@@ -635,10 +680,12 @@ std::vector<Tranzactie> User::loadTransactionsHistory(const std::string &user, c
     int n = 0;
     while (file.getline(line,500)){
         transactions.resize(n+1);
-        transactions[n].setExpeditor(user);
 
         char *p = strtok(line,";");
         transactions[n].setDestinatar(p);
+
+        p = strtok(nullptr,";");
+        transactions[n].setIbanDestinatar(p);
 
         p = strtok(nullptr,";");
         transactions[n].setSumaTrimisa((unsigned int)atoi(p));
@@ -659,6 +706,163 @@ std::vector<Tranzactie> User::loadTransactionsHistory(const std::string &user, c
     }
     file.close();
     return transactions;
+}
+
+unsigned int User::makeTransaction(User &user) {
+    rlutil::setColor(5);
+    std::cout<<"\n\tSend money: ";
+
+    rlutil::setColor(1);
+    std::cout<<"\n\t1. Continue";
+    std::cout<<"\n\t2. Go back";
+
+    std::cout<<"\n\n\tPlease select your choice: ";
+
+    unsigned short option;
+    rlutil::setColor(2);
+    if (std::cin>>option){
+        switch (option) {
+            case 1:{
+                std::string destinatar;
+                std::string IBAN_dest;
+                unsigned int suma;
+                unsigned short zi, luna, an, ora;
+
+                rlutil::setColor(2);
+                std::cin.get();
+                std::cout<<"\n\tEnter full name: "; std::getline(std::cin,destinatar);
+
+                bool cond = false;
+                while (!cond){
+                    rlutil::setColor(2);
+                    std::cout<<"\n\tEnter the sum of money: "; std::cin>>suma;
+                    if (suma>user.getSuma()){
+                        rlutil::setColor(4);
+                        std::cout<<"\n\tYour balance has only "<<user.getSuma()<<" lei! Try again...\n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    }
+                    else
+                        cond = true;
+                }
+
+                cond = false;
+                while (!cond){
+                    rlutil::setColor(2);
+                    std::cout<<"\n\tEnter the IBAN: "; std::cin>>IBAN_dest;
+                    if (Tranzactie::checkPatternIBAN(IBAN_dest) && IBAN_dest!=user.getIban()){
+                        cond = true;
+                        if (User::checkDuplicateIBAN(IBAN_dest)){
+                            User user_aux = returnUser(IBAN_dest);
+                            User::updateBalance("../txt_files/User/users.txt", user_aux.getSuma() + suma, user_aux);
+
+                        }
+                    }
+                    else{
+                        rlutil::setColor(4);
+                        std::cout<<"\n\tInvalid IBAN format! Try again...\n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    }
+                }
+
+                time_t theTime = time(nullptr);
+                struct tm *aTime = localtime(&theTime);
+                zi = aTime->tm_mday;
+                luna = aTime->tm_mon + 1;
+                an = aTime->tm_year + 1900;
+                ora = aTime->tm_hour;
+
+                Tranzactie tran;
+                tran.setDestinatar(destinatar);
+                tran.setIbanDestinatar(IBAN_dest);
+                tran.setSumaTrimisa(suma);
+                tran.setZi(zi);
+                tran.setLuna(luna);
+                tran.setAn(an);
+                tran.setOra(ora);
+
+                std::string file_name = "../txt_files/User/" + user.getEmail() + "_transactions.txt";
+                std::fstream file;
+                file.open(file_name,std::fstream::app);
+                if (!file) {
+                    file.close();
+                    file.open(file_name,std::fstream::in);
+                    Tranzactie::writeInFile(file,tran);
+                }
+                else{
+                    Tranzactie::writeInFile(file,tran);
+                    file.close();
+                }
+
+                rlutil::setColor(4);
+                std::cout<<"\n\tPlease wait... ";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::cout<<"Success!\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                return suma;
+            }
+            case 2:{
+                return 0;
+            }
+            default:{
+                rlutil::setColor(4);
+                std::cout<<"\n\tIncorrect option!\n";
+                makeTransaction(user);
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
+User User::returnUser(const std::string &IBAN) {
+    std::fstream file;
+    file.open("../txt_files/User/users.txt",std::fstream::in);
+    char line[500];
+    std::string nume_cp, email_cp, parola_cp, telefon_cp, IBAN_cp;
+    std::pair<unsigned short, unsigned short> exp_date_cp;
+    int CIV_cp;
+    int suma_cp;
+    while (file.getline(line,500)){
+        char *p = std::strtok(line,";"); nume_cp = p;
+        p = std::strtok(nullptr,";"); email_cp = p;
+        p = std::strtok(nullptr,";"); parola_cp = p;
+        p = std::strtok(nullptr,";"); telefon_cp = p;
+        p = std::strtok(nullptr,";"); IBAN_cp = p;
+
+        p = std::strtok(nullptr,";");
+        char cp[6];
+        strcpy(cp,p);
+
+        p = std::strtok(nullptr,";"); CIV_cp = atoi(p);
+        p = std::strtok(nullptr,";"); suma_cp = atoi(p);
+
+        char *ptr = strtok(cp,"/"); exp_date_cp.first = atoi(ptr);
+        ptr = strtok(nullptr," /"); exp_date_cp.second = atoi(ptr);
+
+    }
+    file.close();
+    User user(nume_cp, parola_cp, email_cp, telefon_cp, IBAN_cp, exp_date_cp, {std::vector<Tranzactie>()},CIV_cp,suma_cp);
+    return user;
+}
+
+bool User::checkDuplicateIBAN(const std::string &IBAN) {
+    std::string IBAN_copy = IBAN;
+    std::transform(IBAN_copy.begin(), IBAN_copy.end(), IBAN_copy.begin(), ::toupper);    std::fstream login;
+    login.open("../txt_files/User/users.txt",std::fstream::in);
+    char line[500];
+    while (login.getline(line,500)){
+        char *p = std::strtok(line,";");
+        p = std::strtok(nullptr,";");
+        p = std::strtok(nullptr,";");
+        p = std::strtok(nullptr,";");
+        p = std::strtok(nullptr,";");
+        if (IBAN_copy==p)
+            return true;
+    }
+    login.close();
+    std::cout<<"1\n";
+    return false;
 }
 
 void User::changePassword(User &user) {

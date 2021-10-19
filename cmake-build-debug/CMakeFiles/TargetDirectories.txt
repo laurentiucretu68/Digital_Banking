@@ -1,3 +1,3 @@
-/home/lawrencium103/Facultate/OOP/proiect/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/lawrencium103/Facultate/OOP/proiect/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/lawrencium103/Facultate/OOP/proiect/cmake-build-debug/CMakeFiles/proiect.dir
+/home/lawrencium103/Facultate/OOP/Project/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/lawrencium103/Facultate/OOP/Project/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/lawrencium103/Facultate/OOP/Project/cmake-build-debug/CMakeFiles/proiect.dir

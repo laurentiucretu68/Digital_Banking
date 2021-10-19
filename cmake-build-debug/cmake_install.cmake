@@ -1,4 +1,4 @@
-# Install script for directory: /home/lawrencium103/Facultate/OOP/proiect
+# Install script for directory: /home/lawrencium103/Facultate/OOP/Project
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/lawrencium103/Facultate/OOP/proiect/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/lawrencium103/Facultate/OOP/Project/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

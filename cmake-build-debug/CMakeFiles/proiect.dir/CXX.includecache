@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/lawrencium103/Facultate/OOP/proiect/includes/Admin.h
+/home/lawrencium103/Facultate/OOP/Project/includes/Admin.h
 iostream
 -
 User.h
-/home/lawrencium103/Facultate/OOP/proiect/includes/User.h
+/home/lawrencium103/Facultate/OOP/Project/includes/User.h
 
-/home/lawrencium103/Facultate/OOP/proiect/includes/Interface.h
+/home/lawrencium103/Facultate/OOP/Project/includes/Interface.h
 iostream
 -
 cstring
@@ -25,18 +25,20 @@ chrono
 -
 thread
 -
+time.h
+-
 regex
 -
 Admin.h
-/home/lawrencium103/Facultate/OOP/proiect/includes/Admin.h
+/home/lawrencium103/Facultate/OOP/Project/includes/Admin.h
 rlutil.h
-/home/lawrencium103/Facultate/OOP/proiect/includes/rlutil.h
+/home/lawrencium103/Facultate/OOP/Project/includes/rlutil.h
 
-/home/lawrencium103/Facultate/OOP/proiect/includes/Tranzactie.h
+/home/lawrencium103/Facultate/OOP/Project/includes/Tranzactie.h
 iostream
 -
 
-/home/lawrencium103/Facultate/OOP/proiect/includes/User.h
+/home/lawrencium103/Facultate/OOP/Project/includes/User.h
 iostream
 -
 random
@@ -44,9 +46,9 @@ random
 vector
 -
 Tranzactie.h
-/home/lawrencium103/Facultate/OOP/proiect/includes/Tranzactie.h
+/home/lawrencium103/Facultate/OOP/Project/includes/Tranzactie.h
 
-/home/lawrencium103/Facultate/OOP/proiect/includes/rlutil.h
+/home/lawrencium103/Facultate/OOP/Project/includes/rlutil.h
 iostream
 -
 string
@@ -72,7 +74,7 @@ sys/types.h
 sys/time.h
 -
 
-/home/lawrencium103/Facultate/OOP/proiect/main.cpp
+/home/lawrencium103/Facultate/OOP/Project/main.cpp
 includes/Interface.h
-/home/lawrencium103/Facultate/OOP/proiect/includes/Interface.h
+/home/lawrencium103/Facultate/OOP/Project/includes/Interface.h
 

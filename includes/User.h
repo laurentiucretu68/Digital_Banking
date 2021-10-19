@@ -128,9 +128,6 @@ public:
         return transaction_history;
     }
 
-    void setTransactionHistory(const std::vector<Tranzactie> &transactionHistory) {
-        transaction_history = transactionHistory;
-    }
 
     int getSuma() const {
         return suma;
@@ -153,6 +150,14 @@ public:
     static void showTransactionsHistory(User& user);
 
     static std::vector<Tranzactie> loadTransactionsHistory(const std::string&, const std::string&);
+
+    static unsigned int makeTransaction(User&);
+
+    static void updateBalance(const std::string&, const unsigned int&, const User& user);
+
+    static bool checkDuplicateIBAN(const std::string &IBAN);
+
+    static User returnUser(const std::string &IBAN);
 };
 
 
