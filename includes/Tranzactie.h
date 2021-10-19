@@ -3,6 +3,7 @@
 class Tranzactie{
     std::string destinatar;
     std::string IBAN_destinatar;
+    std::string type;
     unsigned int suma_trimisa;
     unsigned short zi;
     unsigned short luna;
@@ -14,6 +15,8 @@ public:
 
     Tranzactie& operator=(const Tranzactie& copie){
         this->destinatar = copie.destinatar;
+        this->IBAN_destinatar = copie.IBAN_destinatar;
+        this->type = copie.type;
         this->suma_trimisa = copie.suma_trimisa;
         this->zi = copie.zi;
         this->luna = copie.luna;
@@ -52,10 +55,22 @@ public:
         IBAN_destinatar = ibanDestinatar_copie;
     }
 
+    void setType(const std::string &type_copie) {
+        Tranzactie::type = type_copie;
+    }
+
     friend std::ostream &operator<<(std::ostream &os, const Tranzactie &tranzactie) {
-        os <<"\n\t\tDestinatar: " << tranzactie.destinatar;
+        if (tranzactie.type == "sent")
+            os <<"\n\t\tDestinatar: ";
+        else
+            os <<"\n\t\tExpeditor: ";
+        os << tranzactie.destinatar;
         os <<"\n\t\tIBAN: " << tranzactie.IBAN_destinatar;
-        os <<"\n\t\tSuma_trimisa: " << tranzactie.suma_trimisa <<"lei";
+        os <<"\n\t\tSuma: ";
+        if (tranzactie.type == "sent")
+            os<< "-";
+        os<< tranzactie.suma_trimisa;
+        os<<"lei";
         os <<"\n\t\tData: " << tranzactie.zi << "." << tranzactie.luna << "."<< tranzactie.an;
         os <<"\n\t\tOra: " << tranzactie.ora <<"\n\n";
         return os;
@@ -73,7 +88,7 @@ public:
 
     static void writeInFile(std::fstream &file, const Tranzactie &tranzactie){
         file<<tranzactie.destinatar<<";"<<tranzactie.IBAN_destinatar<<";"<<tranzactie.suma_trimisa<<";";
-        file<<tranzactie.zi<<";"<<tranzactie.luna<<";"<<tranzactie.an<<";"<<tranzactie.ora<<"\n";
+        file<<tranzactie.zi<<";"<<tranzactie.luna<<";"<<tranzactie.an<<";"<<tranzactie.ora<<";"<<tranzactie.type<<"\n";
     }
 
 

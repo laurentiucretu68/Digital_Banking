@@ -702,6 +702,9 @@ std::vector<Tranzactie> User::loadTransactionsHistory(const std::string &user, c
         p = strtok(nullptr,";");
         transactions[n].setOra((unsigned short)atoi(p));
 
+        p = strtok(nullptr,";");
+        transactions[n].setType(p);
+
         n++;
     }
     file.close();
@@ -755,6 +758,35 @@ unsigned int User::makeTransaction(User &user) {
                             User user_aux = returnUser(IBAN_dest);
                             User::updateBalance("../txt_files/User/users.txt", user_aux.getSuma() + suma, user_aux);
 
+                            time_t theTime = time(nullptr);
+                            struct tm *aTime = localtime(&theTime);
+                            zi = aTime->tm_mday;
+                            luna = aTime->tm_mon + 1;
+                            an = aTime->tm_year + 1900;
+                            ora = aTime->tm_hour;
+
+                            Tranzactie tran;
+                            tran.setDestinatar(user.getNumePrenume());
+                            tran.setIbanDestinatar(user.getIban());
+                            tran.setSumaTrimisa(suma);
+                            tran.setZi(zi);
+                            tran.setLuna(luna);
+                            tran.setAn(an);
+                            tran.setOra(ora);
+                            tran.setType("recived");
+
+                            std::string file_name = "../txt_files/User/" + user_aux.getEmail() + "_transactions.txt";
+                            std::fstream file;
+                            file.open(file_name,std::fstream::app);
+                            if (!file) {
+                                file.close();
+                                file.open(file_name,std::fstream::in);
+                                Tranzactie::writeInFile(file,tran);
+                            }
+                            else{
+                                Tranzactie::writeInFile(file,tran);
+                                file.close();
+                            }
                         }
                     }
                     else{
@@ -779,6 +811,7 @@ unsigned int User::makeTransaction(User &user) {
                 tran.setLuna(luna);
                 tran.setAn(an);
                 tran.setOra(ora);
+                tran.setType("sent");
 
                 std::string file_name = "../txt_files/User/" + user.getEmail() + "_transactions.txt";
                 std::fstream file;
