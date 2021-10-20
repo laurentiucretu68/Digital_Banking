@@ -1,5 +1,3 @@
-#include <iostream>
-
 class Tranzactie{
     std::string destinatar;
     std::string IBAN_destinatar;
@@ -11,7 +9,6 @@ class Tranzactie{
     unsigned short ora;
 
 public:
-
 
     Tranzactie& operator=(const Tranzactie& copie){
         this->destinatar = copie.destinatar;

@@ -4,41 +4,39 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
-#include <time.h>
+#include <ctime>
 #include <regex>
 #include "Admin.h"
 #include "rlutil.h"
 
-#define waitkey rlutil::anykey("\n\tClosing the app...\n\n")
-#define error_email rlutil::anykey("\n\tWrong email/username(for admins) or password...\n")
 
 class Interface{
-    /// Signup methods
-    void signup();
+    /// metodele de Signup
+    void signup(); /// metoda generala
     void signupProcess();
 
-    /// Login methods
-    void login();
-    void loginType1(const std::string&);
-    void loginType2(const std::string&, const std::string&);
+    /// metodele pentru Signup
+    static bool checkDuplicateEmail(const std::string&); /// metoda ce verifica daca un email este deja existent in fisier
+    static bool checkPatternEmail(const std::string&); /// metoda ce verifica daca un email corespunde pattern-ului
+    static bool checkPatternPhone(const std::string&); /// metoda ce verifica daca numarul de telefon corespunde pattern-ului
+    static bool checkDuplicatePhone(const std::string&); /// metoda ce verifica daca numarul de telefon este deja existent
+    static bool checkPatternIBAN(const std::string&); /// metoda ce verifica daca IBAN-ul este corespunzator
+    static bool checkDuplicateIBAN(const std::string&); /// metoda ce verifica daca IBAN-ul corespunde pattern-ului
 
-    /// Validation method for Login
+    /// metodele de Login
+    void login(); /// metoda de login generala
+    void loginType1(const std::string&); /// metoda de login pentru Useri
+    void loginType2(const std::string&, const std::string&); /// metoda de login pentru Admini
+
+    /// verifica daca email-ul / username-ul (pentru admini) si parola exista in fisier
     static bool checkEmailPasswordLogin(const std::string&, const std::string&, unsigned short&);
 
-    /// Validation methods for Signup
-    static bool checkDuplicateEmail(const std::string&);
-    static bool checkPatternEmail(const std::string&);
-    static bool checkPatternPhone(const std::string&);
-    static bool checkDuplicatePhone(const std::string&);
-    static bool checkPatternIBAN(const std::string&);
-    static bool checkDuplicateIBAN(const std::string&);
-
-    /// Main Panel methods
+    /// metodele pentru panel-urile de Admin si user
     void panelAdmin(const Admin&);
     void panelUser(const User&);
 
 public:
-    /// Startup method
+    /// metoda de Startup
     void startApp();
 };
 
@@ -69,7 +67,8 @@ void Interface::startApp() {
             }
             case 3:{
                 rlutil::setColor(4);
-                waitkey;
+                std::cout<<"\n\tClosing the app...\n\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 return;
             }
             default:{
@@ -128,13 +127,13 @@ void Interface::signupProcess() {
     std::string IBAN;
     std::pair<unsigned short, unsigned short > exp_date;
     int civ;
-
-    std::cout<<"\n\tNume si prenume: "; std::cin>>name;
     std::cin.get();
+    std::cout<<"\n\tNume si prenume: "; std::getline(std::cin,name);
+
     bool cond = false;
     while (!cond){
         rlutil::setColor(2);
-        std::cout<<"\n\tEmail: "; std::cin>>email;
+        std::cout<<"\n\tEmail: "; std::getline(std::cin,email);
         if (checkPatternEmail(email)){
             if (checkDuplicateEmail(email)){
                 cond = true;
@@ -156,7 +155,7 @@ void Interface::signupProcess() {
     cond = false;
     while (!cond){
         rlutil::setColor(2);
-        std::cout<<"\n\tPassword: "; std::cin>>password;
+        std::cout<<"\n\tPassword: "; std::getline(std::cin,password);
         if (password.length()<7){
             rlutil::setColor(4);
             std::cout<<"\n\tPassword must contain at least 7 characters!\n";
@@ -169,7 +168,7 @@ void Interface::signupProcess() {
     cond = false;
     while (!cond){
         rlutil::setColor(2);
-        std::cout<<"\n\tRepeat password: "; std::cin>>repeat_password;
+        std::cout<<"\n\tRepeat password: "; std::getline(std::cin,repeat_password);
         if (password != repeat_password){
             rlutil::setColor(4);
             std::cout<<"\n\tPassword and Repeat Password don't match! Try again...\n";
@@ -182,7 +181,7 @@ void Interface::signupProcess() {
     cond = false;
     while (!cond){
         rlutil::setColor(2);
-        std::cout<<"\n\tPhone Number (Format: 07********): "; std::cin>>phone;
+        std::cout<<"\n\tPhone Number (Format: 07********): "; std::getline(std::cin,phone);
         if (checkPatternPhone(phone)){
             if (checkDuplicatePhone(phone))
                 cond = true;
@@ -392,7 +391,8 @@ void Interface::login() {
                 }
                 else{
                     rlutil::setColor(4);
-                    error_email;
+                    std::cout<<"\n\tWrong email/username(for admins) or password...\n";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
                     login();
                 }
                 return;
