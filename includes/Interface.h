@@ -21,7 +21,7 @@ class Interface{
     static bool checkPatternPhone(const std::string&); /// metoda ce verifica daca numarul de telefon corespunde pattern-ului
     static bool checkDuplicatePhone(const std::string&); /// metoda ce verifica daca numarul de telefon este deja existent
     static bool checkPatternIBAN(const std::string&); /// metoda ce verifica daca IBAN-ul este corespunzator
-    static bool checkDuplicateIBAN(const std::string&); /// metoda ce verifica daca IBAN-ul corespunde pattern-ului
+    static bool checkDuplicateIBAN(const std::string&); /// metoda ce verifica daca IBAN-ul este deja existent
 
     /// metodele de Login
     void login(); /// metoda de login generala
