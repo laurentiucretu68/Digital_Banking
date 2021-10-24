@@ -1,7 +1,7 @@
 #include "includes/Interface.h"
 
 int main() {
-    Interface* in;
-    in->startApp();
+    Interface i;
+    i.startApp();
     return 0;
 }
