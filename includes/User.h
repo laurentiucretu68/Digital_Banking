@@ -18,7 +18,6 @@ public:
 
     User()= default;;
 
-    /// Constructor de copiere
     User(const User& copie){
         this->nume_prenume = copie.nume_prenume;
         this->parola = copie.parola;
@@ -31,7 +30,6 @@ public:
         this->transaction_history = copie.transaction_history;
     }
 
-    /// Operator =
     User& operator=(const User& copie){
         this->nume_prenume = copie.nume_prenume;
         this->parola = copie.parola;
@@ -45,7 +43,6 @@ public:
         return *this;
     }
 
-    /// Destructor
     ~User(){  }
 
     User(const std::string &numePrenume, const std::string &parola, const std::string &email,
@@ -152,6 +149,8 @@ public:
     static std::vector<Tranzactie> loadTransactionsHistory(const std::string&, const std::string&);
 
     static unsigned int makeTransaction(User&);
+
+    static unsigned int makeTansactionCase1(User&);
 
     static void updateBalance(const std::string&, const unsigned int&, const User& user);
 
