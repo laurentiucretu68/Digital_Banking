@@ -1,13 +1,9 @@
 #include "../includes/Admin.h"
 #include "../includes/Interface.h"
-#include "../includes/rlutil.h"
 #include <iostream>
-#include <cstring>
-#include <iomanip>
 #include <fstream>
 #include <chrono>
 #include <thread>
-#include <ctime>
 #include <regex>
 
 void Interface::startApp() {
@@ -52,7 +48,6 @@ void Interface::startApp() {
 }
 
 void Interface::signup() {
-    rlutil::cls();
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\n\t***** Digital Banking App *****\n\n";
@@ -336,7 +331,6 @@ bool Interface::checkPatternIBAN(const std::string &IBAN) {
 }
 
 void Interface::login() {
-    rlutil::cls();
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\n\t***** Digital Banking App *****\n\n";
@@ -432,7 +426,7 @@ void Interface::loginUser(const std::string &email) {
             std::getline(iss1, date, '/');
             temp.first = stoi(date);
             std::getline(iss1, date, '/');
-            temp.second = stoi(date);;
+            temp.second = stoi(date);
             user.setExpDate(temp);
 
             write.close();

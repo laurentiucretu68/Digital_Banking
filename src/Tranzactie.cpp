@@ -1,13 +1,8 @@
 #include "../includes/Tranzactie.h"
-#include "../includes/rlutil.h"
 #include <iostream>
 #include <fstream>
 #include <random>
-#include <utility>
-#include <vector>
-#include <chrono>
 #include <regex>
-#include <thread>
 
 Tranzactie &Tranzactie::operator=(const Tranzactie &copie) {
     this->destinatar = copie.destinatar;

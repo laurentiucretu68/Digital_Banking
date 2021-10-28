@@ -1,12 +1,10 @@
 #include "../includes/Admin.h"
 #include "../includes/rlutil.h"
 #include <iostream>
-#include <cstring>
 #include <iomanip>
 #include <fstream>
 #include <chrono>
 #include <thread>
-#include <ctime>
 #include <regex>
 
 Admin::Admin(const Admin &copie) {
