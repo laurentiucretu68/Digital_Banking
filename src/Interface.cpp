@@ -13,15 +13,15 @@ void Interface::startApp() {
     std::cout<<"\n \t| **** Digital Banking App **** |\n";
     std::cout<<"\t---------------------------------\n\n";
     rlutil::setColor(2);
-    std::cout<<"\t1. Login"<<'\n';
-    std::cout<<"\t2. Sign up"<<'\n';
-    std::cout<<"\t3. Exit"<<"\n\n";
+    std::cout<<"\t[1] Login"<<'\n';
+    std::cout<<"\t[2] Sign up"<<'\n';
+    std::cout<<"\t[3] Exit"<<"\n\n";
 
     rlutil::setColor(1);
     std::cout<<"\tPlease select your choice: ";
 
     unsigned short option;
-    if (std::cin>>option){
+    while (std::cin>>option){
         switch (option) {
             case 1:{
                 login();
@@ -40,8 +40,8 @@ void Interface::startApp() {
             default:{
                 rlutil::setColor(4);
                 std::cout<<"\n\tIncorrect option!\n";
-                startApp();
-                return;
+                rlutil::setColor(1);
+                std::cout<<"\n\tPlease select your choice: ";
             }
         }
     }
@@ -50,11 +50,10 @@ void Interface::startApp() {
 void Interface::signup() {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
-    std::cout<<"\n\t***** Digital Banking App *****\n\n";
-    std::cout<<"\tSign up\n";
+    std::cout<<"\n\tSign up\n";
     rlutil::setColor(2);
-    std::cout<<"\t1. Continue"<<'\n';
-    std::cout<<"\t2. Back to main panel\n\n";
+    std::cout<<"\t[1] Continue"<<'\n';
+    std::cout<<"\t[2] Back to main panel\n\n";
 
     rlutil::setColor(1);
     std::cout<<"\tPlease select your choice: ";
@@ -62,7 +61,7 @@ void Interface::signup() {
     unsigned short option;
     rlutil::setColor(2);
 
-    if (std::cin>>option){
+    while (std::cin>>option){
         switch(option) {
             case 1: {
                 signupProcess();
@@ -75,9 +74,8 @@ void Interface::signup() {
             default: {
                 rlutil::setColor(4);
                 std::cout<<"\n\tIncorrect option!\n";
-                std::this_thread::sleep_for(std::chrono::seconds(2));
-                startApp();
-                return;
+                rlutil::setColor(1);
+                std::cout<<"\n\tPlease select your choice: ";
             }
         }
     }
@@ -333,12 +331,11 @@ bool Interface::checkPatternIBAN(const std::string &IBAN) {
 void Interface::login() {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
-    std::cout<<"\n\t***** Digital Banking App *****\n\n";
-    std::cout<<"\tLogin\n";
+    std::cout<<"\n\tLogin\n";
     rlutil::setColor(2);
 
-    std::cout<<"\t1. Continue"<<'\n';
-    std::cout<<"\t2. Back to main panel\n\n";
+    std::cout<<"\t[1] Continue"<<'\n';
+    std::cout<<"\t[2] Back to main panel\n\n";
 
     rlutil::setColor(1);
     std::cout<<"\tPlease select your choice: ";
@@ -346,7 +343,7 @@ void Interface::login() {
     unsigned short option;
     rlutil::setColor(2);
 
-    if (std::cin>>option){
+    while (std::cin>>option){
         switch(option) {
             case 1: {
                 std::string email;
@@ -378,8 +375,8 @@ void Interface::login() {
             default: {
                 rlutil::setColor(4);
                 std::cout<<"\n\tIncorrect option!\n";
-                startApp();
-                return;
+                rlutil::setColor(1);
+                std::cout<<"\n\tPlease select your choice: ";
             }
         }
     }
@@ -513,7 +510,7 @@ void Interface::panelUser(const User &user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t---------------------------------";
-    std::cout<<"\n \t| **** Digital Banking App **** |\n";
+    std::cout<<"\n\t| **** Digital Banking App **** |\n";
     std::cout<<"\t---------------------------------\n\n";
     std::cout<<"\tWelcome back "<<user.getNumePrenume()<<"!\n";
     std::cout<<"\tYour balance: "<<user.getSuma()<<"lei"<<"\n\n";
@@ -528,10 +525,11 @@ void Interface::panelUser(const User &user) {
 
     rlutil::setColor(15);
     std::cout<<"\tMeniu:\n";
-    std::cout<<"\t 1. Show transactions history\n";
-    std::cout<<"\t 2. Send money\n";
-    std::cout<<"\t 3. Change password\n";
-    std::cout<<"\t 4. Logout\n";
+    std::cout<<"\t [1] Show transactions history\n";
+    std::cout<<"\t [2] Show messages\n";
+    std::cout<<"\t [3] Send money\n";
+    std::cout<<"\t [4] Change password\n";
+    std::cout<<"\t [5] Logout\n";
 
     rlutil::setColor(1);
     std::cout<<"\n\tPlease select your choice: ";
@@ -539,7 +537,7 @@ void Interface::panelUser(const User &user) {
     unsigned short option;
     rlutil::setColor(2);
 
-    if (std::cin>>option){
+    while (std::cin>>option){
         switch(option) {
             case 1: {
                 User::showTransactionsHistory(const_cast<User &>(user));
@@ -547,17 +545,22 @@ void Interface::panelUser(const User &user) {
                 return;
             }
             case 2: {
+                User::showMessages(const_cast<User &>(user));
+                Interface::panelUser(user);
+                return;
+            }
+            case 3: {
                 unsigned int suma_tranzactie = User::makeTransaction(const_cast<User &>(user));
                 User::updateBalance("../txt_files/User/users.txt", user.getSuma() - suma_tranzactie, const_cast<User &>(user));
                 Interface::loginUser(user.getEmail());
                 return;
             }
-            case 3: {
+            case 4: {
                 User::changePassword(const_cast<User &>(user));
                 panelUser(user);
                 return;
             }
-            case 4: {
+            case 5: {
                 rlutil::setColor(4);
                 std::cout<<"\n\tPlease wait...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -567,8 +570,8 @@ void Interface::panelUser(const User &user) {
             default: {
                 rlutil::setColor(4);
                 std::cout<<"\n\tIncorrect option!\n";
-                panelUser(user);
-                return;
+                rlutil::setColor(1);
+                std::cout<<"\n\tPlease select your choice: ";
             }
         }
     }
@@ -578,12 +581,12 @@ void Interface::panelAdmin(const Admin& admin) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t---------------------------------";
-    std::cout<<"\n \t| **** Digital Banking App **** |\n";
+    std::cout<<"\n\t| **** Digital Banking App **** |\n";
     std::cout<<"\t---------------------------------\n\n";
     std::cout<<"\tWelcome back "<<admin.getUsername()<<"!\n\n";
     rlutil::setColor(2);
-    std::cout<<"\t1. Show all users"<<'\n';
-    std::cout<<"\t2. Logout\n\n";
+    std::cout<<"\t[1] Show all users"<<'\n';
+    std::cout<<"\t[2] Logout\n\n";
 
     rlutil::setColor(1);
     std::cout<<"\tPlease select your choice: ";
@@ -591,7 +594,7 @@ void Interface::panelAdmin(const Admin& admin) {
     unsigned short option;
     rlutil::setColor(2);
 
-    if (std::cin>>option){
+    while (std::cin>>option){
         switch(option) {
             case 1: {
                 unsigned short val = 0;
@@ -610,11 +613,9 @@ void Interface::panelAdmin(const Admin& admin) {
             default: {
                 rlutil::setColor(4);
                 std::cout<<"\n\tIncorrect option!\n";
-                panelAdmin(admin);
-                return;
+                rlutil::setColor(1);
+                std::cout<<"\n\tPlease select your choice: ";
             }
         }
     }
-    else
-        return;
 }

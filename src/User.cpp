@@ -191,16 +191,18 @@ void User::showTransactionsHistory(User &user) {
     unsigned short option;
     rlutil::setColor(2);
 
-    if (std::cin>>option){
+    while (std::cin>>option){
         if (option==1){
             rlutil::setColor(4);
             std::cout<<"\n\tWait...\n\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
+            return;
         }
         else{
             rlutil::setColor(4);
             std::cout<<"\n\tIncorrect option!\n";
-            User::showTransactionsHistory(user);
+            rlutil::setColor(1);
+            std::cout<<"\n\tPlease select your choice: ";
         }
     }
 }
@@ -252,16 +254,15 @@ unsigned int User::makeTransaction(User &user) {
     std::cout<<"\n\tSend money: ";
 
     rlutil::setColor(1);
-    std::cout<<"\n\t1. Continue";
-    std::cout<<"\n\t2. Go back";
+    std::cout<<"\n\t[1] Continue";
+    std::cout<<"\n\t[2] Go back";
 
     std::cout<<"\n\n\tPlease select your choice: ";
 
     unsigned short option;
     rlutil::setColor(2);
-    if (std::cin>>option){
-        switch (option) {
-            case 1:{
+    while (std::cin>>option){
+        if (option == 1) {
                 unsigned int suma = User::makeTansactionCase1(user);
                 rlutil::setColor(4);
                 std::cout<<"\n\tPlease wait... ";
@@ -269,15 +270,15 @@ unsigned int User::makeTransaction(User &user) {
                 std::cout<<"Success!\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 return suma;
-            }
-            case 2:{
+        }
+        else{
+            if (option == 2)
                 return 0;
-            }
-            default:{
+            else{
                 rlutil::setColor(4);
                 std::cout<<"\n\tIncorrect option!\n";
-                makeTransaction(user);
-                return 0;
+                rlutil::setColor(1);
+                std::cout<<"\n\tPlease select your choice: ";
             }
         }
     }
@@ -456,7 +457,6 @@ void User::changePassword(User &user) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     else{
-        rlutil::cls();
         std::string parola_curenta, parola_noua, parola_noua_repetare;
 
         bool cond;
@@ -537,3 +537,85 @@ void User::changePassword(User &user) {
 
     }
 }
+
+void User::showMessages(User &user) {
+    rlutil::setColor(5);
+    std::cout<<"\n\tMessages: ";
+
+    std::string file_name = "../txt_files/User/" + user.getEmail() + "_messages.txt";
+    std::ifstream file;
+    file.open(file_name);
+    if (!file)
+        std::cout<<"empty\n\n";
+    else{
+        std::vector<Messages> mesaje = User::loadMessages(user.getEmail(), file_name);
+        std::cout<<"\n"; rlutil::setColor(2);
+        for (auto & mesaj_curent : mesaje)
+            std::cout<<mesaj_curent;
+    }
+    file.close();
+
+    rlutil::setColor(1);
+    std::cout<<"\n\tGo back to all users panel - type 1\n\n";
+
+    std::cout<<"\tPlease select your choice: ";
+
+    unsigned short option;
+    rlutil::setColor(2);
+
+    while (std::cin>>option){
+        if (option==1){
+            rlutil::setColor(4);
+            std::cout<<"\n\tWait...\n\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            return;
+        }
+        else{
+            rlutil::setColor(4);
+            std::cout<<"\n\tIncorrect option!\n";
+            rlutil::setColor(1);
+            std::cout<<"\n\tPlease select your choice: ";
+        }
+    }
+}
+
+std::vector<Messages> User::loadMessages(const std::string &user, const std::string& file_name) {
+    std::vector<Messages> mesaje;
+    std::ifstream file;
+    file.open(file_name);
+    std::string line;
+
+    int n = 0;
+    while (std::getline(file, line)){
+        mesaje.resize(n+1);
+        std::istringstream iss(line);
+        std::string word;
+
+        std::getline(iss, word, ';');
+        mesaje[n].setDestinatar(word);
+
+        std::getline(iss, word, ';');
+        mesaje[n].setTipMesaj((unsigned short)stoi(word));
+
+        std::getline(iss, word, ';');
+        mesaje[n].setMesaj(word);
+
+        std::getline(iss, word, ';');
+        mesaje[n].setZi((unsigned short)stoi(word));
+
+        std::getline(iss, word, ';');
+        mesaje[n].setLuna((unsigned short)stoi(word));
+
+        std::getline(iss, word, ';');
+        mesaje[n].setAn((unsigned short)stoi(word));
+
+        std::getline(iss, word, ';');
+        mesaje[n].setOra((unsigned short)stoi(word));
+
+        n++;
+    }
+    file.close();
+    return mesaje;
+}
+
+

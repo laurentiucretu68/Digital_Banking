@@ -1,4 +1,5 @@
 #include "../includes/Admin.h"
+#include "../includes/Messages.h"
 #include "../includes/rlutil.h"
 #include <iostream>
 #include <iomanip>
@@ -42,13 +43,9 @@ void Admin::setParola(const std::string &parola_copie) {
 }
 
 void Admin::showAllUsers(const Admin& admin, unsigned short& val) {
-    rlutil::cls();
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
-    std::cout<<"\t---------------------------------";
-    std::cout<<"\n \t| **** Digital Banking App **** |\n";
-    std::cout<<"\t---------------------------------\n\n";
-    std::cout<<"\tAdmin panel -- all users\n\n";
+    std::cout<<"\n\tAdmin panel -- all users\n\n";
 
     rlutil::setColor(2);
     std::fstream login;
@@ -111,7 +108,7 @@ void Admin::showAllUsers(const Admin& admin, unsigned short& val) {
     unsigned short option;
     rlutil::setColor(2);
 
-    if (std::cin>>option){
+    while (std::cin>>option){
         if (option==0){
             rlutil::setColor(4);
             std::cout<<"\n\tWait...\n\n";
@@ -123,25 +120,22 @@ void Admin::showAllUsers(const Admin& admin, unsigned short& val) {
         if (option>=1 && option<=n){
             Admin::showUser(admin,users[option-1]);
             val = 1;
+            return;
         }
         else{
             rlutil::setColor(4);
             std::cout<<"\n\tIncorrect option!\n";
             val = 1;
-            showAllUsers(admin,val);
-            return;
+            rlutil::setColor(1);
+            std::cout<<"\n\tPlease select your choice: ";
         }
     }
 }
 
 void Admin::showUser(const Admin& admin,const User &user) {
-    rlutil::cls();
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
-    std::cout<<"\t---------------------------------";
-    std::cout<<"\n \t| **** Digital Banking App **** |\n";
-    std::cout<<"\t---------------------------------\n\n";
-    std::cout<<"\t Info about "<<user.getNumePrenume()<<"\n\n";
+    std::cout<<"\n\t Info about "<<user.getNumePrenume()<<"\n\n";
 
     rlutil::setColor(2);
     std::cout<<"\t First name and last name: "<<user.getNumePrenume()<<"\n";
@@ -162,14 +156,15 @@ void Admin::showUser(const Admin& admin,const User &user) {
     }
 
     rlutil::setColor(1);
-    std::cout<<"\tGo back to all users panel - type 1\n\n";
+    std::cout<<"\t[1] Go back to all users panel \n";
+    std::cout<<"\t[2] Send a message to this user\n\n";
 
     std::cout<<"\tPlease select your choice: ";
 
     unsigned short option;
     rlutil::setColor(2);
 
-    if (std::cin>>option){
+    while (std::cin>>option){
         if (option==1){
             rlutil::setColor(4);
             std::cout<<"\n\tWait...\n\n";
@@ -178,11 +173,127 @@ void Admin::showUser(const Admin& admin,const User &user) {
             Admin::showAllUsers(admin,val);
             return;
         }
+        else
+            if (option==2){
+                rlutil::setColor(4);
+                std::cout<<"\n\tWait...\n\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                Admin::sendMessage(admin, user);
+                return;
+            }
+            else{
+                rlutil::setColor(4);
+                std::cout<<"\n\tIncorrect option!\n";
+                rlutil::setColor(1);
+                std::cout<<"\n\tPlease select your choice: ";
+            }
+    }
+}
+
+void Admin::sendMessage(const Admin& admin, const User& user) {
+    rlutil::setColor(13);
+    rlutil::setBackgroundColor(0);
+    std::cout<<"\t Send message to: "<<user.getNumePrenume()<<"\n\n";
+
+    rlutil::setColor(1);
+    std::cout<<"\t[1] Go back to user panel info \n";
+    std::cout<<"\t[2] Continue\n\n";
+
+    std::cout<<"\tPlease select your choice: ";
+    unsigned short option;
+    rlutil::setColor(2);
+
+    while (std::cin>>option){
+        if (option==1){
+            rlutil::setColor(4);
+            std::cout<<"\n\tWait...\n\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            Admin::showUser(admin,user);
+            return;
+        }
+        else
+        if (option==2){
+            rlutil::setColor(4);
+            std::cout<<"\n\tWait...\n\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unsigned short success = 0;
+            processingMessage(user,success);
+            if (success == 1){
+                rlutil::setColor(4);
+                std::cout<<"\n\tMessage sent!";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::cout<<"\n\tLoading main panel! Please wait...\n";
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+            }
+            else{
+                rlutil::setColor(4);
+                std::cout<<"\n\tError..\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+            return;
+        }
         else{
             rlutil::setColor(4);
             std::cout<<"\n\tIncorrect option!\n";
-            showUser(admin,user);
-            return;
+            rlutil::setColor(1);
+            std::cout<<"\n\tPlease select your choice: ";
         }
     }
+}
+
+void Admin::processingMessage(const User &user, unsigned short& success) {
+    std::string mesaj;
+    rlutil::setColor(1);
+    std::cout<<"\tSelect type of message:\n";
+    std::cout<<"\t[1] Warning\n";
+    std::cout<<"\t[2] Advice\n";
+    std::cout<<"\t[3] Notification\n\n";
+
+    std::cout<<"\tPlease select your choice: ";
+    unsigned short type;
+    rlutil::setColor(2);
+    while(std::cin>>type){
+        if (type != 1 && type != 2 && type != 3){
+            rlutil::setColor(4);
+            std::cout<<"\n\tIncorrect option!\n";
+            rlutil::setColor(1);
+            std::cout<<"\n\tPlease select your choice: ";
+        }
+        else
+            break;
+    }
+
+    std::cin.get();
+    std::cout<<"\n\tMessage: "; std::getline(std::cin,mesaj);
+
+    unsigned short zi, luna, an, ora;
+    time_t theTime = time(nullptr);
+    struct tm *aTime = localtime(&theTime);
+    zi = aTime->tm_mday;
+    luna = aTime->tm_mon + 1;
+    an = aTime->tm_year + 1900;
+    ora = aTime->tm_hour;
+
+    Messages message;
+    message.setDestinatar(user.getEmail());
+    message.setMesaj(mesaj);
+    message.setTipMesaj(type);
+    message.setZi(zi);
+    message.setLuna(luna);
+    message.setAn(an);
+    message.setOra(ora);
+
+    std::string file_name = "../txt_files/User/" + user.getEmail() + "_messages.txt";
+    std::fstream file;
+    file.open(file_name,std::fstream::app);
+    if (!file) {
+        file.close();
+        file.open(file_name,std::fstream::in);
+        Messages::writeInFile(file,message);
+    }
+    else{
+        Messages::writeInFile(file,message);
+        file.close();
+    }
+    success = 1;
 }

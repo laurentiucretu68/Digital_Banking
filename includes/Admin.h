@@ -33,5 +33,9 @@ public:
 
     static void showUser(const Admin&, const User&);
 
+    static void sendMessage(const Admin&,const User&);
+
+    static void processingMessage(const User&, unsigned short&);
+
 };
 

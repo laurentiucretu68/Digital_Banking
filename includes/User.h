@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include "Tranzactie.h"
+#include "Messages.h"
 
 class User{
     std::string nume_prenume;
@@ -14,6 +15,7 @@ class User{
     std::string IBAN;
     std::pair<unsigned short, unsigned short > exp_date;
     std::vector<Tranzactie> transaction_history;
+    std::vector<Messages> messages;
     int CIV{};
     int suma{};
 
@@ -78,6 +80,10 @@ public:
     static void showTransactionsHistory(User& user);
 
     static std::vector<Tranzactie> loadTransactionsHistory(const std::string&, const std::string&);
+
+    static void showMessages(User& user);
+
+    static std::vector<Messages> loadMessages(const std::string&, const std::string&);
 
     static unsigned int makeTransaction(User&);
 
