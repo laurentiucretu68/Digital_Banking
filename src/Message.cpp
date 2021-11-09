@@ -2,9 +2,6 @@
 #include <iostream>
 #include "../includes/rlutil.h"
 
-const std::string &Message::getDestinatar() const {
-    return destinatar;
-}
 
 void Message::setDestinatar(const std::string &destinatar_copie) {
     Message::destinatar = destinatar_copie;
@@ -24,10 +21,6 @@ Message &Message::operator=(const Message &copie) {
     this->tip_mesaj = copie.tip_mesaj;
     this->data = copie.data;
     return *this;
-}
-
-unsigned short Message::getTipMesaj() const {
-    return tip_mesaj;
 }
 
 void Message::setTipMesaj(unsigned short tipMesaj_copie) {
