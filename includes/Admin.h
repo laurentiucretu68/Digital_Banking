@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include "Tranzactie.h"
+#include "Message.h"
 #include "User.h"
 
 class Admin{
@@ -12,8 +13,10 @@ class Admin{
     std::string email;
     std::string parola;
 
+    void processingMessage(const User&, unsigned short&);
+
 public:
-    Admin()= default;;
+    Admin()= default;
 
     Admin(const Admin& copie);
 
@@ -29,13 +32,11 @@ public:
 
     void setParola(const std::string &parola_copie);
 
-    static void showAllUsers(const Admin&, unsigned short&);
+    void showAllUsers(unsigned short&);
 
-    static void showUser(const Admin&, const User&);
+    void showUser(const User&);
 
-    static void sendMessage(const Admin&,const User&);
-
-    static void processingMessage(const User&, unsigned short&);
+    void sendMessage(const User&);
 
 };
 

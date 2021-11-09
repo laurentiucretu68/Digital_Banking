@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 #include "Tranzactie.h"
-#include "Messages.h"
+#include "Message.h"
 
 class User{
     std::string nume_prenume;
@@ -13,9 +13,9 @@ class User{
     std::string email;
     std::string telefon;
     std::string IBAN;
-    std::pair<unsigned short, unsigned short > exp_date;
+    std::pair<unsigned short, unsigned short> exp_date;
     std::vector<Tranzactie> transaction_history;
-    std::vector<Messages> messages;
+    std::vector<Message> messages;
     int CIV{};
     int suma{};
 
@@ -75,25 +75,25 @@ public:
 
     void setCiv(int civ);
 
-    static void changePassword(User& user);
+    void changePassword() const;
 
-    static void showTransactionsHistory(User& user);
+    void showTransactionsHistory();
 
-    static std::vector<Tranzactie> loadTransactionsHistory(const std::string&, const std::string&);
+    std::vector<Tranzactie> loadTransactionsHistory(const std::string&, const std::string&);
 
-    static void showMessages(User& user);
+    void showMessages();
 
-    static std::vector<Messages> loadMessages(const std::string&, const std::string&);
+    std::vector<Message> loadMessages(const std::string&, const std::string&);
 
-    static unsigned int makeTransaction(User&);
+    unsigned int makeTransaction();
 
-    static unsigned int makeTansactionCase1(User&);
+    unsigned int makeTansactionCase1();
 
-    static void updateBalance(const std::string&, const unsigned int&, const User& user);
+    void updateBalance(const std::string&, const unsigned int&);
 
-    static bool checkDuplicateIBAN(const std::string &IBAN);
+    bool checkDuplicateIBAN(const std::string &IBAN);
 
-    static User returnUser(const std::string &IBAN);
+    User returnUser(const std::string &IBAN);
 };
 
 

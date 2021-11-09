@@ -3,15 +3,19 @@
 #include <random>
 #include <thread>
 
+struct data_str{
+    unsigned short zi;
+    unsigned short luna;
+    unsigned short an;
+    unsigned short ora;
+};
+
 class Tranzactie{
     std::string destinatar;
     std::string IBAN_destinatar;
     std::string type;
     unsigned int suma_trimisa;
-    unsigned short zi;
-    unsigned short luna;
-    unsigned short an;
-    unsigned short ora;
+    data_str data;
 
 public:
 
@@ -23,13 +27,7 @@ public:
 
     void setSumaTrimisa(unsigned int sumaTrimisa);
 
-    void setZi(unsigned short zi_copie);
-
-    void setLuna(unsigned short luna_copie);
-
-    void setAn(unsigned short an_copie);
-
-    void setOra(unsigned short ora_copie);
+    void setData(const data_str &data);
 
     void setIbanDestinatar(const std::string &ibanDestinatar_copie);
 
@@ -37,8 +35,8 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Tranzactie &tranzactie);
 
-    static bool checkPatternIBAN(const std::string &IBAN);
+    bool checkPatternIBAN(const std::string &IBAN);
 
-    static void writeInFile(std::fstream &file, const Tranzactie &tranzactie);
+    void writeInFile(std::fstream &file);
 
 };

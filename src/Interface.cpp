@@ -506,7 +506,7 @@ bool Interface::checkEmailPasswordLogin(const std::string& email, const std::str
     return false;
 }
 
-void Interface::panelUser(const User &user) {
+void Interface::panelUser(User &user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t---------------------------------";
@@ -540,23 +540,23 @@ void Interface::panelUser(const User &user) {
     while (std::cin>>option){
         switch(option) {
             case 1: {
-                User::showTransactionsHistory(const_cast<User &>(user));
+                user.showTransactionsHistory();
                 Interface::panelUser(user);
                 return;
             }
             case 2: {
-                User::showMessages(const_cast<User &>(user));
+                user.showMessages();
                 Interface::panelUser(user);
                 return;
             }
             case 3: {
-                unsigned int suma_tranzactie = User::makeTransaction(const_cast<User &>(user));
-                User::updateBalance("../txt_files/User/users.txt", user.getSuma() - suma_tranzactie, const_cast<User &>(user));
+                unsigned int suma_tranzactie = user.makeTransaction();
+                user.updateBalance("../txt_files/User/users.txt", user.getSuma() - suma_tranzactie);
                 Interface::loginUser(user.getEmail());
                 return;
             }
             case 4: {
-                User::changePassword(const_cast<User &>(user));
+                user.changePassword();
                 panelUser(user);
                 return;
             }
@@ -577,7 +577,7 @@ void Interface::panelUser(const User &user) {
     }
 }
 
-void Interface::panelAdmin(const Admin& admin) {
+void Interface::panelAdmin(Admin& admin) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t---------------------------------";
@@ -598,7 +598,7 @@ void Interface::panelAdmin(const Admin& admin) {
         switch(option) {
             case 1: {
                 unsigned short val = 0;
-                Admin::showAllUsers(admin,val);
+                admin.showAllUsers(val);
                 if (val == 1)
                     panelAdmin(admin);
                 return;

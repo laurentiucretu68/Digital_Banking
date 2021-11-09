@@ -9,10 +9,7 @@ Tranzactie &Tranzactie::operator=(const Tranzactie &copie) {
     this->IBAN_destinatar = copie.IBAN_destinatar;
     this->type = copie.type;
     this->suma_trimisa = copie.suma_trimisa;
-    this->zi = copie.zi;
-    this->luna = copie.luna;
-    this->an = copie.an;
-    this->ora = copie.ora;
+    this->data = copie.data;
     return *this;
 }
 
@@ -22,22 +19,6 @@ void Tranzactie::setDestinatar(const std::string &destinatar_copie) {
 
 void Tranzactie::setSumaTrimisa(unsigned int sumaTrimisa) {
     suma_trimisa = sumaTrimisa;
-}
-
-void Tranzactie::setZi(unsigned short zi_copie) {
-    Tranzactie::zi = zi_copie;
-}
-
-void Tranzactie::setLuna(unsigned short luna_copie) {
-    Tranzactie::luna = luna_copie;
-}
-
-void Tranzactie::setAn(unsigned short an_copie) {
-    Tranzactie::an = an_copie;
-}
-
-void Tranzactie::setOra(unsigned short ora_copie) {
-    Tranzactie::ora = ora_copie;
 }
 
 void Tranzactie::setIbanDestinatar(const std::string &ibanDestinatar_copie) {
@@ -60,8 +41,8 @@ std::ostream &operator<<(std::ostream &os, const Tranzactie &tranzactie) {
         os<< "-";
     os<< tranzactie.suma_trimisa;
     os<<"lei";
-    os <<"\n\t\tData: " << tranzactie.zi << "." << tranzactie.luna << "."<< tranzactie.an;
-    os <<"\n\t\tOra: " << tranzactie.ora <<"\n\n";
+    os <<"\n\t\tData: " << tranzactie.data.zi << "." << tranzactie.data.luna << "."<< tranzactie.data.an;
+    os <<"\n\t\tOra: " << tranzactie.data.ora <<"\n\n";
     return os;
 }
 
@@ -75,7 +56,11 @@ bool Tranzactie::checkPatternIBAN(const std::string &IBAN) {
     return std::regex_match(IBAN_copy, pattern);
 }
 
-void Tranzactie::writeInFile(std::fstream &file, const Tranzactie &tranzactie) {
-    file<<tranzactie.destinatar<<";"<<tranzactie.IBAN_destinatar<<";"<<tranzactie.suma_trimisa<<";";
-    file<<tranzactie.zi<<";"<<tranzactie.luna<<";"<<tranzactie.an<<";"<<tranzactie.ora<<";"<<tranzactie.type<<"\n";
+void Tranzactie::writeInFile(std::fstream &file) {
+    file<<destinatar<<";"<<IBAN_destinatar<<";"<<suma_trimisa<<";";
+    file<<data.zi<<";"<<data.luna<<";"<<data.an<<";"<<data.ora<<";"<<type<<"\n";
+}
+
+void Tranzactie::setData(const data_str &data_cp) {
+    Tranzactie::data = data_cp;
 }

@@ -1,5 +1,4 @@
 #include "../includes/Admin.h"
-#include "../includes/Messages.h"
 #include "../includes/rlutil.h"
 #include <iostream>
 #include <iomanip>
@@ -42,7 +41,7 @@ void Admin::setParola(const std::string &parola_copie) {
     Admin::parola = parola_copie;
 }
 
-void Admin::showAllUsers(const Admin& admin, unsigned short& val) {
+void Admin::showAllUsers(unsigned short& val) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\n\tAdmin panel -- all users\n\n";
@@ -118,7 +117,7 @@ void Admin::showAllUsers(const Admin& admin, unsigned short& val) {
         }
         else
         if (option>=1 && option<=n){
-            Admin::showUser(admin,users[option-1]);
+            Admin::showUser(users[option-1]);
             val = 1;
             return;
         }
@@ -132,7 +131,7 @@ void Admin::showAllUsers(const Admin& admin, unsigned short& val) {
     }
 }
 
-void Admin::showUser(const Admin& admin,const User &user) {
+void Admin::showUser(const User &user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\n\t Info about "<<user.getNumePrenume()<<"\n\n";
@@ -170,7 +169,7 @@ void Admin::showUser(const Admin& admin,const User &user) {
             std::cout<<"\n\tWait...\n\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
             unsigned short val = 1;
-            Admin::showAllUsers(admin,val);
+            Admin::showAllUsers(val);
             return;
         }
         else
@@ -178,7 +177,7 @@ void Admin::showUser(const Admin& admin,const User &user) {
                 rlutil::setColor(4);
                 std::cout<<"\n\tWait...\n\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                Admin::sendMessage(admin, user);
+                Admin::sendMessage(user);
                 return;
             }
             else{
@@ -190,7 +189,7 @@ void Admin::showUser(const Admin& admin,const User &user) {
     }
 }
 
-void Admin::sendMessage(const Admin& admin, const User& user) {
+void Admin::sendMessage(const User& user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t Send message to: "<<user.getNumePrenume()<<"\n\n";
@@ -208,7 +207,7 @@ void Admin::sendMessage(const Admin& admin, const User& user) {
             rlutil::setColor(4);
             std::cout<<"\n\tWait...\n\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            Admin::showUser(admin,user);
+            Admin::showUser(user);
             return;
         }
         else
@@ -273,15 +272,18 @@ void Admin::processingMessage(const User &user, unsigned short& success) {
     luna = aTime->tm_mon + 1;
     an = aTime->tm_year + 1900;
     ora = aTime->tm_hour;
+    data_str_mess data_cp{};
+    data_cp.zi = zi;
+    data_cp.luna = luna;
+    data_cp.an = an;
+    data_cp.ora = ora;
 
-    Messages message;
+
+    Message message;
     message.setDestinatar(user.getEmail());
     message.setMesaj(mesaj);
     message.setTipMesaj(type);
-    message.setZi(zi);
-    message.setLuna(luna);
-    message.setAn(an);
-    message.setOra(ora);
+    message.setData(data_cp);
 
     std::string file_name = "../txt_files/User/" + user.getEmail() + "_messages.txt";
     std::fstream file;
@@ -289,10 +291,10 @@ void Admin::processingMessage(const User &user, unsigned short& success) {
     if (!file) {
         file.close();
         file.open(file_name,std::fstream::in);
-        Messages::writeInFile(file,message);
+        message.writeInFile(file);
     }
     else{
-        Messages::writeInFile(file,message);
+        message.writeInFile(file);
         file.close();
     }
     success = 1;
