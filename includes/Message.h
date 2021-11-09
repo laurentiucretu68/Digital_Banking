@@ -22,8 +22,6 @@ public:
 
     ~Message() = default;
 
-    const std::string &getDestinatar() const;
-
     void setDestinatar(const std::string &destinatar_copie);
 
     const std::string &getMesaj() const;
@@ -33,8 +31,6 @@ public:
     const data_str_mess &getData() const;
 
     void setData(const data_str_mess &data_cp);
-
-    unsigned short getTipMesaj() const;
 
     void setTipMesaj(unsigned short tipMesaj);
 
