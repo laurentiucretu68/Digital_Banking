@@ -8,15 +8,15 @@
 #include <regex>
 
 Admin::Admin(const Admin &copie) {
-    this->username = copie.username;
-    this->email = copie.email;
-    this->parola = copie.parola;
+    username = copie.username;
+    email = copie.email;
+    parola = copie.parola;
 }
 
 Admin &Admin::operator=(const Admin &copie) {
-    this->username = copie.username;
-    this->email = copie.email;
-    this->parola = copie.parola;
+    username = copie.username;
+    email = copie.email;
+    parola = copie.parola;
     return *this;
 }
 
@@ -81,7 +81,7 @@ void Admin::showAllUsers(unsigned short& val) {
         users[n].setCiv(stoi(word));
 
         std::getline(iss, word, ';');
-        users[n].setSuma(stoi(word));
+        users[n].setSuma((float)stof(word));
 
         std::istringstream iss1(aux);
         std::string date;
@@ -131,7 +131,7 @@ void Admin::showAllUsers(unsigned short& val) {
     }
 }
 
-void Admin::showUser(const User &user) {
+void Admin::showUser(User &user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\n\t Info about "<<user.getNumePrenume()<<"\n\n";
@@ -145,13 +145,14 @@ void Admin::showUser(const User &user) {
     rlutil::setColor(15);
     std::cout<<"\t Transaction History: ";
 
-    const std::vector<Tranzactie>& t = user.getTransactionHistory();
+    std::string file_name = "../txt_files/User/" + user.getEmail() + "_transactions.txt";
+    std::vector<std::shared_ptr<Tranzactie>> t = user.loadTransactionsHistory(file_name);
     if (t.empty())
         std::cout<<"empty\n\n";
     else{
         std::cout<<"\n\n";
         for (const auto & i : t)
-            std::cout<<i<<"\n";
+            std::cout<<"\t"<<*i<<"\n";
     }
 
     rlutil::setColor(1);
@@ -189,7 +190,7 @@ void Admin::showUser(const User &user) {
     }
 }
 
-void Admin::sendMessage(const User& user) {
+void Admin::sendMessage(User& user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t Send message to: "<<user.getNumePrenume()<<"\n\n";

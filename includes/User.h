@@ -4,24 +4,25 @@
 #include <random>
 #include <utility>
 #include <vector>
+#include <memory>
 #include "Tranzactie.h"
 #include "Message.h"
 
 class User{
-    std::string nume_prenume;
-    std::string parola;
-    std::string email;
-    std::string telefon;
-    std::string IBAN;
-    std::pair<unsigned short, unsigned short> exp_date;
-    std::vector<Tranzactie> transaction_history;
-    std::vector<Message> messages;
+    std::string nume_prenume{};
+    std::string parola{};
+    std::string email{};
+    std::string telefon{};
+    std::string IBAN{};
+    std::pair<unsigned short, unsigned short> exp_date{};
+    std::vector<std::shared_ptr<Tranzactie>> transaction_history{};
+    std::vector<std::shared_ptr<Message>> messages{};
     int CIV{};
-    int suma{};
+    float suma{};
 
 public:
 
-    User()= default;;
+    User()= default;
 
     User(const User& copie);
 
@@ -31,10 +32,12 @@ public:
 
     User(std::string numePrenume, std::string parola, std::string email,
          std::string telefon, std::string iban, std::pair<unsigned short, unsigned short> expDate,
-         std::vector<Tranzactie> transactionHistory, int civ, int suma) : nume_prenume(std::move(numePrenume)), parola(std::move(parola)),
+         std::vector<std::shared_ptr<Tranzactie>> transaction_history, std::vector<std::shared_ptr<Message>> messages,
+         int civ, float suma) : nume_prenume(std::move(numePrenume)), parola(std::move(parola)),
                                                                        email(std::move(email)), telefon(std::move(telefon)), IBAN(std::move(iban)),
                                                                        exp_date(std::move(expDate)),
-                                                                       transaction_history(std::move(transactionHistory)),
+                                                                       transaction_history(std::move(transaction_history)),
+                                                                       messages(std::move(messages)),
                                                                        CIV(civ), suma(suma) {}
 
     friend std::ostream &operator<<(std::ostream &os, const User &user);
@@ -65,11 +68,9 @@ public:
 
     void setExpDate(const std::pair<unsigned short, unsigned short> &expDate);
 
-    const std::vector<Tranzactie> &getTransactionHistory() const;
+    float getSuma() const;
 
-    int getSuma() const;
-
-    void setSuma(int suma_copie);
+    void setSuma(float suma_copie);
 
     int getCiv() const;
 
@@ -79,17 +80,17 @@ public:
 
     void showTransactionsHistory();
 
-    std::vector<Tranzactie> loadTransactionsHistory(const std::string&, const std::string&);
+    std::vector<std::shared_ptr<Tranzactie>> loadTransactionsHistory(const std::string&);
 
     void showMessages();
 
-    std::vector<Message> loadMessages(const std::string&, const std::string&);
+    std::vector<std::shared_ptr<Message>> loadMessages(const std::string&);
 
-    unsigned int makeTransaction();
+    float makeTransaction();
 
-    unsigned int makeTansactionCase1();
+    float makeTansactionCase1();
 
-    void updateBalance(const std::string&, const unsigned int&);
+    void updateBalance(const float&);
 
     bool checkDuplicateIBAN(const std::string &IBAN);
 

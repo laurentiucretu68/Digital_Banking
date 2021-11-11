@@ -9,10 +9,9 @@
 #include "User.h"
 
 class Admin{
-    std::string username;
-    std::string email;
-    std::string parola;
-
+    std::string username{};
+    std::string email{};
+    std::string parola{};
     void processingMessage(const User&, unsigned short&);
 
 public:
@@ -34,9 +33,9 @@ public:
 
     void showAllUsers(unsigned short&);
 
-    void showUser(const User&);
+    void showUser(User&);
 
-    void sendMessage(const User&);
+    void sendMessage(User&);
 
 };
 

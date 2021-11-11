@@ -11,13 +11,12 @@ struct data_str_mess{
 };
 
 class Message {
-    std::string destinatar;
-    std::string mesaj;
-    unsigned short tip_mesaj;
-    data_str_mess data;
+    std::string destinatar{};
+    std::string mesaj{};
+    unsigned short tip_mesaj{};
+    data_str_mess data{};
 
 public:
-
     Message& operator=(const Message& copie);
 
     ~Message() = default;

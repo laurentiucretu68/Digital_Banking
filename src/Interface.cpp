@@ -223,10 +223,10 @@ void Interface::signupProcess() {
     }
 
     std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(100,5000);
-    int suma = distribution(generator);
+    std::uniform_real_distribution<float> distribution(100,5000);
+    float suma = distribution(generator);
 
-    User u(name, password, email, phone, IBAN, exp_date, {std::vector<Tranzactie>()},civ,suma);
+    User u(name, password, email, phone, IBAN, exp_date, std::vector<std::shared_ptr<Tranzactie>>(),std::vector<std::shared_ptr<Message>>(),civ,suma);
     User::writeUserInFile(u);
 
     rlutil::setColor(3);
@@ -415,7 +415,7 @@ void Interface::loginUser(const std::string &email) {
             user.setCiv(stoi(word));
 
             std::getline(iss, word, ';');
-            user.setSuma(stoi(word));
+            user.setSuma((float)stof(word));
 
             std::pair<unsigned short , unsigned short> temp;
             std::istringstream iss1(aux);
@@ -550,8 +550,8 @@ void Interface::panelUser(User &user) {
                 return;
             }
             case 3: {
-                unsigned int suma_tranzactie = user.makeTransaction();
-                user.updateBalance("../txt_files/User/users.txt", user.getSuma() - suma_tranzactie);
+                float suma_tranzactie = user.makeTransaction();
+                user.updateBalance(user.getSuma() - suma_tranzactie);
                 Interface::loginUser(user.getEmail());
                 return;
             }

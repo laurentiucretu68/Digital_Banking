@@ -10,27 +10,27 @@
 #include <regex>
 
 User::User(const User &copie) {
-    this->nume_prenume = copie.nume_prenume;
-    this->parola = copie.parola;
-    this->email = copie.email;
-    this->telefon = copie.telefon;
-    this->IBAN = copie.IBAN;
-    this->exp_date = copie.exp_date;
-    this->CIV = copie.CIV;
-    this->suma = copie.suma;
-    this->transaction_history = copie.transaction_history;
+    nume_prenume = copie.nume_prenume;
+    parola = copie.parola;
+    email = copie.email;
+    telefon = copie.telefon;
+    IBAN = copie.IBAN;
+    exp_date = copie.exp_date;
+    CIV = copie.CIV;
+    suma = copie.suma;
+    transaction_history = copie.transaction_history;
 }
 
 User &User::operator=(const User &copie) {
-    this->nume_prenume = copie.nume_prenume;
-    this->parola = copie.parola;
-    this->email = copie.email;
-    this->telefon = copie.telefon;
-    this->IBAN = copie.IBAN;
-    this->exp_date = copie.exp_date;
-    this->CIV = copie.CIV;
-    this->suma = copie.suma;
-    this->transaction_history = copie.transaction_history;
+    nume_prenume = copie.nume_prenume;
+    parola = copie.parola;
+    email = copie.email;
+    telefon = copie.telefon;
+    IBAN = copie.IBAN;
+    exp_date = copie.exp_date;
+    CIV = copie.CIV;
+    suma = copie.suma;
+    transaction_history = copie.transaction_history;
     return *this;
 }
 
@@ -98,19 +98,15 @@ void User::setExpDate(const std::pair<unsigned short, unsigned short> &expDate) 
     exp_date = expDate;
 }
 
-const std::vector<Tranzactie> &User::getTransactionHistory() const {
-    return transaction_history;
-}
-
 const std::string &User::getIban() const {
     return IBAN;
 }
 
-int User::getSuma() const {
+float User::getSuma() const {
     return suma;
 }
 
-void User::setSuma(int suma_copie) {
+void User::setSuma(float suma_copie) {
     User::suma = suma_copie;
 }
 
@@ -122,7 +118,7 @@ void User::setCiv(int civ) {
     CIV = civ;
 }
 
-void User::updateBalance(const std::string &file_name, const unsigned int &suma_tranzactie) {
+void User::updateBalance(const float &suma_tranzactie) {
     std::fstream old_file;
     std::ofstream new_file ("../txt_files/User/temporary.txt");
     old_file.open("../txt_files/User/users.txt",std::fstream::in);
@@ -161,9 +157,9 @@ void User::updateBalance(const std::string &file_name, const unsigned int &suma_
     }
 
     old_file.close(); new_file.close();
-    int result = remove("../txt_files/User/users.txt");
-    result = rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
-    result = remove("../txt_files/User/temporary.txt");
+    remove("../txt_files/User/users.txt");
+    rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
+    remove("../txt_files/User/temporary.txt");
 }
 
 void User::showTransactionsHistory() {
@@ -176,10 +172,10 @@ void User::showTransactionsHistory() {
     if (!file)
         std::cout<<"empty\n\n";
     else{
-        std::vector<Tranzactie> transactions = User::loadTransactionsHistory(getEmail(),file_name);
+        std::vector<std::shared_ptr<Tranzactie>> transactions = User::loadTransactionsHistory(file_name);
         std::cout<<"\n"; rlutil::setColor(2);
         for (auto & transaction : transactions)
-            std::cout<<transaction;
+            std::cout<<*transaction;
     }
     file.close();
 
@@ -207,26 +203,25 @@ void User::showTransactionsHistory() {
     }
 }
 
-std::vector<Tranzactie> User::loadTransactionsHistory(const std::string &user, const std::string& file_name) {
-    std::vector<Tranzactie> transactions;
+std::vector<std::shared_ptr<Tranzactie>> User::loadTransactionsHistory(const std::string& file_name) {
+    std::vector<std::shared_ptr<Tranzactie>> transactions;
     std::ifstream file;
     file.open(file_name);
     std::string line;
 
-    int n = 0;
     while (std::getline(file, line)){
-        transactions.resize(n+1);
+        Tranzactie tranzactie_curenta;
         std::istringstream iss(line);
         std::string word;
 
         std::getline(iss, word, ';');
-        transactions[n].setDestinatar(word);
+        tranzactie_curenta.setDestinatar(word);
 
         std::getline(iss, word, ';');
-        transactions[n].setIbanDestinatar(word);
+        tranzactie_curenta.setIbanDestinatar(word);
 
         std::getline(iss, word, ';');
-        transactions[n].setSumaTrimisa((unsigned int)stoi(word));
+        tranzactie_curenta.setSumaTrimisa((float)stof(word));
 
         data_str data_cp{};
 
@@ -242,18 +237,18 @@ std::vector<Tranzactie> User::loadTransactionsHistory(const std::string &user, c
         std::getline(iss, word, ';');
         data_cp.ora = (unsigned short)stoi(word);
 
-        transactions[n].setData(data_cp);
+        tranzactie_curenta.setData(data_cp);
 
         std::getline(iss, word, ';');
-        transactions[n].setType(word);
+        tranzactie_curenta.setType(word);
 
-        n++;
+        transactions.emplace_back(std::make_shared<Tranzactie>(tranzactie_curenta));
     }
     file.close();
     return transactions;
 }
 
-unsigned int User::makeTransaction() {
+float User::makeTransaction() {
     rlutil::setColor(5);
     std::cout<<"\n\tSend money: ";
 
@@ -267,7 +262,7 @@ unsigned int User::makeTransaction() {
     rlutil::setColor(2);
     while (std::cin>>option){
         if (option == 1) {
-                unsigned int suma_ = makeTansactionCase1();
+                float suma_ = makeTansactionCase1();
                 rlutil::setColor(4);
                 std::cout<<"\n\tPlease wait... ";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -289,10 +284,10 @@ unsigned int User::makeTransaction() {
     return 0;
 }
 
-unsigned int User::makeTansactionCase1() {
+float User::makeTansactionCase1() {
     std::string destinatar;
     std::string IBAN_dest;
-    unsigned int suma_;
+    float suma_;
     unsigned short zi, luna, an, ora;
 
     rlutil::setColor(2);
@@ -321,7 +316,7 @@ unsigned int User::makeTansactionCase1() {
             cond = true;
             if (checkDuplicateIBAN(IBAN_dest)){
                 User user_aux = returnUser(IBAN_dest);
-                user_aux.updateBalance("../txt_files/User/users.txt", user_aux.getSuma() + suma_);
+                user_aux.updateBalance(user_aux.getSuma() + suma_);
 
                 time_t theTime = time(nullptr);
                 struct tm *aTime = localtime(&theTime);
@@ -403,7 +398,7 @@ User User::returnUser(const std::string &IBAN_) {
     std::string nume_cp, email_cp, parola_cp, telefon_cp, IBAN_cp;
     std::pair<unsigned short, unsigned short> exp_date_cp;
     int CIV_cp;
-    int suma_cp;
+    float suma_cp;
     std::string line;
     while (std::getline(file, line)){
         std::istringstream iss(line);
@@ -418,7 +413,7 @@ User User::returnUser(const std::string &IBAN_) {
         std::string aux(word);
 
         std::getline(iss, word, ';'); CIV_cp = stoi(word);
-        std::getline(iss, word, ';');  suma_cp = stoi(word);
+        std::getline(iss, word, ';');  suma_cp = (float)stof(word);
 
         std::istringstream iss1(aux);
         std::string date;
@@ -431,7 +426,7 @@ User User::returnUser(const std::string &IBAN_) {
             break;
     }
     file.close();
-    User user(nume_cp, parola_cp, email_cp, telefon_cp, IBAN_cp, exp_date_cp, {std::vector<Tranzactie>()},CIV_cp,suma_cp);
+    User user(nume_cp, parola_cp, email_cp, telefon_cp, IBAN_cp, exp_date_cp, std::vector<std::shared_ptr<Tranzactie>>(), std::vector<std::shared_ptr<Message>>(), CIV_cp,suma_cp);
     return user;
 }
 
@@ -558,10 +553,10 @@ void User::showMessages() {
     if (!file)
         std::cout<<"empty\n\n";
     else{
-        std::vector<Message> mesaje = User::loadMessages(getEmail(), file_name);
+        std::vector<std::shared_ptr<Message>> mesaje = User::loadMessages(file_name);
         std::cout<<"\n"; rlutil::setColor(2);
         for (auto & mesaj_curent : mesaje)
-            std::cout<<mesaj_curent;
+            std::cout<<*mesaj_curent;
     }
     file.close();
 
@@ -589,26 +584,25 @@ void User::showMessages() {
     }
 }
 
-std::vector<Message> User::loadMessages(const std::string &user, const std::string& file_name) {
-    std::vector<Message> mesaje;
+std::vector<std::shared_ptr<Message>> User::loadMessages(const std::string& file_name) {
+    std::vector<std::shared_ptr<Message>> mesaje;
     std::ifstream file;
     file.open(file_name);
     std::string line;
 
-    int n = 0;
     while (std::getline(file, line)){
-        mesaje.resize(n+1);
+        Message mesaj_auxiliar;
         std::istringstream iss(line);
         std::string word;
 
         std::getline(iss, word, ';');
-        mesaje[n].setDestinatar(word);
+        mesaj_auxiliar.setDestinatar(word);
 
         std::getline(iss, word, ';');
-        mesaje[n].setTipMesaj((unsigned short)stoi(word));
+        mesaj_auxiliar.setTipMesaj((unsigned short)stoi(word));
 
         std::getline(iss, word, ';');
-        mesaje[n].setMesaj(word);
+        mesaj_auxiliar.setMesaj(word);
 
         data_str_mess data_cp{};
 
@@ -624,9 +618,8 @@ std::vector<Message> User::loadMessages(const std::string &user, const std::stri
         std::getline(iss, word, ';');
         data_cp.ora = (unsigned short)stoi(word);
 
-        mesaje[n].setData(data_cp);
-
-        n++;
+        mesaj_auxiliar.setData(data_cp);
+        mesaje.emplace_back(std::make_shared<Message>(mesaj_auxiliar));
     }
     file.close();
     return mesaje;

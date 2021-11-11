@@ -11,11 +11,11 @@ struct data_str{
 };
 
 class Tranzactie{
-    std::string destinatar;
-    std::string IBAN_destinatar;
-    std::string type;
-    unsigned int suma_trimisa;
-    data_str data;
+    std::string destinatar{};
+    std::string IBAN_destinatar{};
+    std::string type{};
+    float suma_trimisa{};
+    data_str data{};
 
 public:
 
@@ -25,7 +25,7 @@ public:
 
     void setDestinatar(const std::string &destinatar_copie);
 
-    void setSumaTrimisa(unsigned int sumaTrimisa);
+    void setSumaTrimisa(float sumaTrimisa);
 
     void setData(const data_str &data);
 

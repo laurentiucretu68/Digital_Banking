@@ -5,11 +5,11 @@
 #include <regex>
 
 Tranzactie &Tranzactie::operator=(const Tranzactie &copie) {
-    this->destinatar = copie.destinatar;
-    this->IBAN_destinatar = copie.IBAN_destinatar;
-    this->type = copie.type;
-    this->suma_trimisa = copie.suma_trimisa;
-    this->data = copie.data;
+    destinatar = copie.destinatar;
+    IBAN_destinatar = copie.IBAN_destinatar;
+    type = copie.type;
+    suma_trimisa = copie.suma_trimisa;
+    data = copie.data;
     return *this;
 }
 
@@ -17,7 +17,7 @@ void Tranzactie::setDestinatar(const std::string &destinatar_copie) {
     Tranzactie::destinatar = destinatar_copie;
 }
 
-void Tranzactie::setSumaTrimisa(unsigned int sumaTrimisa) {
+void Tranzactie::setSumaTrimisa(float sumaTrimisa) {
     suma_trimisa = sumaTrimisa;
 }
 
