@@ -2,6 +2,7 @@
 #include <iostream>
 #include "../includes/rlutil.h"
 
+
 void Message::setDestinatar(const std::string &destinatar_copie) {
     Message::destinatar = destinatar_copie;
 }
