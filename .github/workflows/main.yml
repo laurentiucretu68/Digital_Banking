@@ -18,10 +18,6 @@ jobs:
         os: [ubuntu-20.04]
         cxx: [g++, clang++]
         include:
-          - os: macos-10.15
-            cxx: clang++
-          - os: windows-2019
-            cxx: cl
           - os: windows-2019
             cxx: g++
             cmake_generator: "\"MinGW Makefiles\""
