@@ -9,6 +9,7 @@
 #include "Message.h"
 
 class User{
+protected:
     std::string nume_prenume{};
     std::string parola{};
     std::string email{};
@@ -28,7 +29,7 @@ public:
 
     User& operator=(const User& copie);
 
-    ~User()= default;
+    virtual ~User()= default;
 
     User(std::string numePrenume, std::string parola, std::string email,
          std::string telefon, std::string iban, std::pair<unsigned short, unsigned short> expDate,
@@ -42,7 +43,7 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const User &user);
 
-    static void writeUserInFile(const User& copie);
+    virtual void writeUserInFile();
 
     const std::string &getNumePrenume() const;
 
@@ -76,7 +77,7 @@ public:
 
     void setCiv(int civ);
 
-    void changePassword() const;
+    virtual void changePassword() const;
 
     void showTransactionsHistory();
 
@@ -90,7 +91,7 @@ public:
 
     float makeTansactionCase1();
 
-    void updateBalance(const float&);
+    virtual void updateBalance(const float&);
 
     bool checkDuplicateIBAN(const std::string &IBAN);
 

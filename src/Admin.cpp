@@ -49,7 +49,7 @@ void Admin::showAllUsers(unsigned short& val) {
     rlutil::setColor(2);
     std::fstream login;
     login.open("../txt_files/User/users.txt",std::fstream::in);
-    std::vector<User> users;
+    std::vector<UserBusiness> users;
     users.resize(1);
 
     std::string line;
@@ -92,6 +92,12 @@ void Admin::showAllUsers(unsigned short& val) {
         temp.second = stoi(date);
         users[n].setExpDate(temp);
 
+        if (std::getline(iss, word, ';')){
+            users[n].setNumeCompanie(word);
+            std::getline(iss, word, ';');
+            users[n].setCui(word);
+        }
+
         n++;
         users.resize(n+1);
     }
@@ -131,7 +137,7 @@ void Admin::showAllUsers(unsigned short& val) {
     }
 }
 
-void Admin::showUser(User &user) {
+void Admin::showUser(UserBusiness &user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\n\t Info about "<<user.getNumePrenume()<<"\n\n";
@@ -141,7 +147,13 @@ void Admin::showUser(User &user) {
     std::cout<<"\t Email: "<<user.getEmail()<<"\n";
     std::cout<<"\t Phone number: "<<user.getTelefon()<<"\n";
     std::cout<<"\t IBAN: "<<user.getIban()<<"\n";
-    std::cout<<"\t Balance: "<<user.getSuma()<<"lei"<<"\n\n";
+    std::cout<<"\t Balance: "<<user.getSuma()<<"lei\n";
+    if (!user.getNumeCompanie().empty()){
+        std::cout<<"\t Company name: "<<user.getNumeCompanie()<<"\n";
+        std::cout<<"\t CUI: "<<user.getCui()<<"\n\n";
+    }
+    else
+        std::cout<<"\n";
     rlutil::setColor(15);
     std::cout<<"\t Transaction History: ";
 
@@ -190,7 +202,7 @@ void Admin::showUser(User &user) {
     }
 }
 
-void Admin::sendMessage(User& user) {
+void Admin::sendMessage(UserBusiness& user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t Send message to: "<<user.getNumePrenume()<<"\n\n";

@@ -3,4 +3,4 @@ project(proiect)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(proiect main.cpp src/User.cpp src/Admin.cpp src/Tranzactie.cpp src/Interface.cpp src/Message.cpp)
+add_executable(proiect main.cpp src/User.cpp src/Admin.cpp src/Tranzactie.cpp src/Interface.cpp src/Message.cpp src/UserBusiness.cpp includes/UserBusiness.h)

@@ -41,13 +41,13 @@ std::ostream &operator<<(std::ostream &os, const User &user) {
     return os;
 }
 
-void User::writeUserInFile(const User &copie) {
+void User::writeUserInFile() {
     std::fstream write;
 
     write.open("../txt_files/User/users.txt",std::fstream::app);
-    write<<copie.nume_prenume<<';'<<copie.email<<';'<<copie.parola<<';';
-    write<<copie.telefon<<';'<<copie.IBAN<<';'<<copie.exp_date.first<<'/'<<copie.exp_date.second<<';';
-    write<<copie.CIV<<';'<<copie.suma<<'\n';
+    write<< nume_prenume<<';'<<email<<';'<<parola<<';';
+    write<< telefon<<';'<<IBAN<<';'<<exp_date.first<<'/'<<exp_date.second<<';';
+    write<< CIV<<';'<<suma<<'\n';
 
     write.close();
     write.open("../txt_files/User/users.txt",std::fstream::app);
@@ -126,10 +126,12 @@ void User::updateBalance(const float &suma_tranzactie) {
     while (std::getline(old_file, line)){
         const std::string& copy(line);
         std::istringstream iss(line);
-        std::string word;
+        std::string word, aux_nume;
         std::getline(iss, word, ';');
-        if (word == getNumePrenume()){
-            new_file<<word<<";";
+        aux_nume = word;
+        std::getline(iss, word, ';');
+        if (word == getEmail()){
+            new_file<<aux_nume<<";"<<word<<";";
             std::getline(iss, word, ';');
 
             new_file<<word<<";";
@@ -147,8 +149,6 @@ void User::updateBalance(const float &suma_tranzactie) {
             new_file<<word<<";";
             std::getline(iss, word, ';');
 
-            new_file<<word<<";";
-            std::getline(iss, word, ';');
 
             new_file<<suma_tranzactie<<"\n";
         }

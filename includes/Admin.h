@@ -7,6 +7,7 @@
 #include "Tranzactie.h"
 #include "Message.h"
 #include "User.h"
+#include "UserBusiness.h"
 
 class Admin{
     std::string username{};
@@ -33,9 +34,9 @@ public:
 
     void showAllUsers(unsigned short&);
 
-    void showUser(User&);
+    void showUser(UserBusiness&);
 
-    void sendMessage(User&);
+    void sendMessage(UserBusiness&);
 
 };
 

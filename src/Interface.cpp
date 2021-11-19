@@ -222,12 +222,42 @@ void Interface::signupProcess() {
         }
     }
 
+    std::string numeCompanie{};
+    rlutil::setColor(2);
+    std::cin.get();
+    std::cout<<"\n\tNume companie (scrie 0 pentru persoana fizica): "; std::getline(std::cin,numeCompanie);
+
+    cond = false;
+    std::string cui{};
+    while (!cond){
+        rlutil::setColor(2);
+        std::cout<<"\n\tCUI (scrie 0 pentru persoana fizica): "; std::cin>>cui;
+        static const std::regex pattern("([0-9]*)");
+        if (std::regex_match(cui, pattern))
+            cond = true;
+        else{
+            rlutil::setColor(4);
+            std::cout<<"\n\tInvalid CUI format! Try again...\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    }
+
     std::default_random_engine generator;
     std::uniform_real_distribution<float> distribution(100,5000);
     float suma = distribution(generator);
 
+    std::hash<std::string> hash_pass;
+    password = std::to_string(hash_pass(password));
     User u(name, password, email, phone, IBAN, exp_date, std::vector<std::shared_ptr<Tranzactie>>(),std::vector<std::shared_ptr<Message>>(),civ,suma);
-    User::writeUserInFile(u);
+
+    if (numeCompanie!="0" && cui!="0"){
+        UserBusiness ub_aux(u,numeCompanie,cui);
+        std::shared_ptr<UserBusiness> ub;
+        ub = std::make_shared<UserBusiness>(ub_aux);
+        ub->writeUserInFile();
+    }
+    else
+        u.writeUserInFile();
 
     rlutil::setColor(3);
     std::cout<<"\n\tCreating account...";
@@ -235,7 +265,6 @@ void Interface::signupProcess() {
     std::cout<<"\n\tDone\n\n";
     std::this_thread::sleep_for(std::chrono::seconds(2));
     startApp();
-
 }
 
 bool Interface::checkDuplicateEmail(const std::string &email) {
@@ -351,6 +380,8 @@ void Interface::login() {
                 unsigned short tip=0;
                 std::cout<<"\n\tEmail/Username (for admins): "; std::cin>>email;
                 std::cout<<"\n\tPassword: ";    std::cin>>password;
+                std::hash<std::string> hash_pass;
+                password = std::to_string(hash_pass(password));
                 if (checkEmailPasswordLogin(email,password,tip)){
                     rlutil::setColor(3);
                     std::cout<<"\n\tLogin Succesful!\n\n";
@@ -426,8 +457,16 @@ void Interface::loginUser(const std::string &email) {
             temp.second = stoi(date);
             user.setExpDate(temp);
 
+            std::string numeCompanie, cui;
+            if(std::getline(iss, word, ';')){
+                numeCompanie = word;
+                std::getline(iss, word, ';');
+                cui = word;
+            }
+            UserBusiness ub(user,numeCompanie,cui);
+
             write.close();
-            panelUser(user);
+            panelUser(ub);
             break;
         }
     }
@@ -506,7 +545,7 @@ bool Interface::checkEmailPasswordLogin(const std::string& email, const std::str
     return false;
 }
 
-void Interface::panelUser(User &user) {
+void Interface::panelUser(UserBusiness &user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t---------------------------------";
@@ -521,7 +560,13 @@ void Interface::panelUser(User &user) {
     std::cout<<"\t IBAN: "<<user.getIban()<<"\n";
     std::pair<unsigned short, unsigned short> date_aux = user.getExpDate();
     std::cout<<"\t Date exp: "<<date_aux.first<<"/"<<date_aux.second<<"\n";
-    std::cout<<"\t CIV: "<<user.getCiv()<<"\n\n";
+    std::cout<<"\t CIV: "<<user.getCiv()<<"\n";
+    if (!user.getNumeCompanie().empty()){
+        std::cout<<"\t Nume companie: "<<user.getNumeCompanie()<<"\n";
+        std::cout<<"\t CUI: "<<user.getCui()<<"\n\n";
+    }
+    else
+        std::cout<<"\n";
 
     rlutil::setColor(15);
     std::cout<<"\tMeniu:\n";
@@ -551,12 +596,24 @@ void Interface::panelUser(User &user) {
             }
             case 3: {
                 float suma_tranzactie = user.makeTransaction();
-                user.updateBalance(user.getSuma() - suma_tranzactie);
+                if (!user.getNumeCompanie().empty()){
+                    std::shared_ptr<UserBusiness> ub_aux;
+                    ub_aux = std::make_shared<UserBusiness>(user);
+                    ub_aux->updateBalance(ub_aux->getSuma() - suma_tranzactie);
+                }
+                else
+                    user.updateBalance(user.getSuma() - suma_tranzactie);
                 Interface::loginUser(user.getEmail());
                 return;
             }
             case 4: {
-                user.changePassword();
+                if (!user.getNumeCompanie().empty()){
+                    std::shared_ptr<UserBusiness> ub_aux;
+                    ub_aux = std::make_shared<UserBusiness>(user);
+                    ub_aux->changePassword();
+                }
+                else
+                    user.changePassword();
                 panelUser(user);
                 return;
             }

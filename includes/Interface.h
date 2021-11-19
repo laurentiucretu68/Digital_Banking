@@ -16,23 +16,23 @@ class Interface{
     void signupProcess();
 
     /// metodele pentru Signup
-    bool checkDuplicateEmail(const std::string&);
-    bool checkPatternEmail(const std::string&);
-    bool checkPatternPhone(const std::string&);
-    bool checkDuplicatePhone(const std::string&);
-    bool checkPatternIBAN(const std::string&);
-    bool checkDuplicateIBAN(const std::string&);
+    static bool checkDuplicateEmail(const std::string&);
+    static bool checkPatternEmail(const std::string&);
+    static bool checkPatternPhone(const std::string&);
+    static bool checkDuplicatePhone(const std::string&);
+    static bool checkPatternIBAN(const std::string&);
+    static bool checkDuplicateIBAN(const std::string&);
 
     /// metodele de Login
     void login();
     void loginUser(const std::string&);
     void loginAdmin(const std::string&, const std::string&);
 
-    bool checkEmailPasswordLogin(const std::string&, const std::string&, unsigned short&);
+    static bool checkEmailPasswordLogin(const std::string&, const std::string&, unsigned short&);
 
     /// metodele panel
     void panelAdmin(Admin&);
-    void panelUser(User&);
+    void panelUser(UserBusiness&);
 
 public:
     /// metoda de Startup
