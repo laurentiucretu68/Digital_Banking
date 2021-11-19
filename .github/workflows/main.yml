@@ -1,36 +1,73 @@
-# This is a basic workflow to help you get started with Actions
+name: C++ CI
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main] # replace with main (if applicable)
+    tags: '*'
   pull_request:
-    branches: [ main ]
+    branches: [main] # replace with main (if applicable)
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    env:
+      BUILD_TYPE: release
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        cxx: [g++, clang++]
+        include:
+          - os: windows-2019
+            cxx: g++
+            cmake_generator: "\"MinGW Makefiles\""
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Prepare env
+        shell: bash
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          echo $GITHUB_WORKSPACE
+          mkdir $GITHUB_WORKSPACE/build
+          mkdir $GITHUB_WORKSPACE/artifacts
+      - name: Configure CMake
+        env:
+          CXX: ${{ matrix.cxx }}
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        # https://github.com/saxbophone/CPP20-Cross-Platform-Template
+        shell: bash
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B . -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        shell: bash
+        # Execute the build.  You can specify a specific target with "--target <NAME>"
+        run: cmake --build . --config $BUILD_TYPE
+
+      - name: Install
+        # working-directory: ${{ github.workspace }}/build
+        shell: bash
+        # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
+        run: cmake --install build --config $BUILD_TYPE --prefix artifacts
+
+      - name: Set Tag Name
+        shell: bash
+        # trim prefix from ref to get tag name
+        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> $GITHUB_ENV
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          type: 'zip'
+          path: artifacts
+          filename: release_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            release_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
