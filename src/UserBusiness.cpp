@@ -5,6 +5,8 @@
 #include <thread>
 #include <regex>
 #include <string>
+#include <sstream>
+
 
 void UserBusiness::writeUserInFile() {
     std::fstream write;
