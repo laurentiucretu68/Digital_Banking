@@ -7,6 +7,7 @@
 #include <thread>
 #include <regex>
 #include <string>
+#include <sstream>
 
 Admin::Admin(const Admin &copie) {
     username = copie.username;
