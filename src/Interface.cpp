@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <regex>
+#include <sstream>
 
 void Interface::startApp() {
     rlutil::setColor(13);
