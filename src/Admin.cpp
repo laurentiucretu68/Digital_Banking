@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <regex>
+#include <string>
 
 Admin::Admin(const Admin &copie) {
     username = copie.username;
@@ -81,7 +82,7 @@ void Admin::showAllUsers(unsigned short& val) {
         users[n].setCiv(stoi(word));
 
         std::getline(iss, word, ';');
-        users[n].setSuma((float)stof(word));
+        users[n].setSuma(stof(word));
 
         std::istringstream iss1(aux);
         std::string date;
@@ -137,7 +138,7 @@ void Admin::showAllUsers(unsigned short& val) {
     }
 }
 
-void Admin::showUser(UserBusiness &user) {
+void Admin::showUser(const UserBusiness &user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\n\t Info about "<<user.getNumePrenume()<<"\n\n";
@@ -157,8 +158,7 @@ void Admin::showUser(UserBusiness &user) {
     rlutil::setColor(15);
     std::cout<<"\t Transaction History: ";
 
-    std::string file_name = "../txt_files/User/" + user.getEmail() + "_transactions.txt";
-    std::vector<std::shared_ptr<Tranzactie>> t = user.loadTransactionsHistory(file_name);
+    const auto &t = user.loadTransactionsHistory();
     if (t.empty())
         std::cout<<"empty\n\n";
     else{
@@ -202,7 +202,7 @@ void Admin::showUser(UserBusiness &user) {
     }
 }
 
-void Admin::sendMessage(UserBusiness& user) {
+void Admin::sendMessage(const UserBusiness& user) {
     rlutil::setColor(13);
     rlutil::setBackgroundColor(0);
     std::cout<<"\t Send message to: "<<user.getNumePrenume()<<"\n\n";

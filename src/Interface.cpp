@@ -1,6 +1,7 @@
 #include "../includes/Admin.h"
 #include "../includes/Interface.h"
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <chrono>
 #include <thread>

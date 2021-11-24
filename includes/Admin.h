@@ -34,9 +34,9 @@ public:
 
     void showAllUsers(unsigned short&);
 
-    void showUser(UserBusiness&);
+    void showUser(const UserBusiness&);
 
-    void sendMessage(UserBusiness&);
+    void sendMessage(const UserBusiness&);
 
 };
 

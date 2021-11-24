@@ -79,13 +79,13 @@ public:
 
     virtual void changePassword() const;
 
-    void showTransactionsHistory();
+    void showTransactionsHistory() const;
 
-    std::vector<std::shared_ptr<Tranzactie>> loadTransactionsHistory(const std::string&);
+    std::vector<std::shared_ptr<Tranzactie>> loadTransactionsHistory() const;
 
-    void showMessages();
+    void showMessages() const;
 
-    std::vector<std::shared_ptr<Message>> loadMessages(const std::string&);
+    std::vector<std::shared_ptr<Message>> loadMessages() const;
 
     float makeTransaction();
 
@@ -96,6 +96,9 @@ public:
     bool checkDuplicateIBAN(const std::string &IBAN);
 
     User returnUser(const std::string &IBAN);
+
+    void updateFileFromTemp() const;
+
 };
 
 

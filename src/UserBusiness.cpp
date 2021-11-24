@@ -4,6 +4,7 @@
 #include <fstream>
 #include <thread>
 #include <regex>
+#include <string>
 
 void UserBusiness::writeUserInFile() {
     std::fstream write;
@@ -159,23 +160,15 @@ void UserBusiness::changePassword() const {
         }
 
         old_file.close(); new_file.close();
-        int result = remove("../txt_files/User/users.txt");
-        result = rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
-        result = remove("../txt_files/User/temporary.txt");
-
-        if (result){
-            rlutil::setColor(4);
-            std::cout<<"\n\tPassword changed!\n";
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-        }
+        User::updateFileFromTemp();
 
     }
 }
 
-void UserBusiness::setNumeCompanie(const std::string &numeCompanie) {
-    UserBusiness::numeCompanie = numeCompanie;
+void UserBusiness::setNumeCompanie(const std::string &numeCompanie_) {
+    UserBusiness::numeCompanie = numeCompanie_;
 }
 
-void UserBusiness::setCui(const std::string &cui) {
-    CUI = cui;
+void UserBusiness::setCui(const std::string &cui_) {
+    CUI = cui_;
 }

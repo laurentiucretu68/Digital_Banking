@@ -2,12 +2,14 @@
 #include "../includes/rlutil.h"
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <random>
 #include <vector>
 #include <chrono>
 #include <thread>
 #include <ctime>
 #include <regex>
+#include <sstream>
 
 User::User(const User &copie) {
     nume_prenume = copie.nume_prenume;
@@ -162,7 +164,7 @@ void User::updateBalance(const float &suma_tranzactie) {
     remove("../txt_files/User/temporary.txt");
 }
 
-void User::showTransactionsHistory() {
+void User::showTransactionsHistory() const{
     rlutil::setColor(5);
     std::cout<<"\n\tTransaction History: ";
 
@@ -172,7 +174,7 @@ void User::showTransactionsHistory() {
     if (!file)
         std::cout<<"empty\n\n";
     else{
-        std::vector<std::shared_ptr<Tranzactie>> transactions = User::loadTransactionsHistory(file_name);
+        std::vector<std::shared_ptr<Tranzactie>> transactions = User::loadTransactionsHistory();
         std::cout<<"\n"; rlutil::setColor(2);
         for (auto & transaction : transactions)
             std::cout<<*transaction;
@@ -203,7 +205,8 @@ void User::showTransactionsHistory() {
     }
 }
 
-std::vector<std::shared_ptr<Tranzactie>> User::loadTransactionsHistory(const std::string& file_name) {
+std::vector<std::shared_ptr<Tranzactie>> User::loadTransactionsHistory() const{
+    std::string file_name = "../txt_files/User/" + email + "_transactions.txt";
     std::vector<std::shared_ptr<Tranzactie>> transactions;
     std::ifstream file;
     file.open(file_name);
@@ -221,7 +224,7 @@ std::vector<std::shared_ptr<Tranzactie>> User::loadTransactionsHistory(const std
         tranzactie_curenta.setIbanDestinatar(word);
 
         std::getline(iss, word, ';');
-        tranzactie_curenta.setSumaTrimisa((float)stof(word));
+        tranzactie_curenta.setSumaTrimisa(stof(word));
 
         data_str data_cp{};
 
@@ -413,7 +416,7 @@ User User::returnUser(const std::string &IBAN_) {
         std::string aux(word);
 
         std::getline(iss, word, ';'); CIV_cp = stoi(word);
-        std::getline(iss, word, ';');  suma_cp = (float)stof(word);
+        std::getline(iss, word, ';');  suma_cp = stof(word);
 
         std::istringstream iss1(aux);
         std::string date;
@@ -530,20 +533,11 @@ void User::changePassword() const {
         }
 
         old_file.close(); new_file.close();
-        int result = remove("../txt_files/User/users.txt");
-        result = rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
-        result = remove("../txt_files/User/temporary.txt");
-
-        if (result){
-            rlutil::setColor(4);
-            std::cout<<"\n\tPassword changed!\n";
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-        }
-
+        User::updateFileFromTemp();
     }
 }
 
-void User::showMessages() {
+void User::showMessages() const {
     rlutil::setColor(5);
     std::cout<<"\n\tMessages: ";
 
@@ -553,7 +547,7 @@ void User::showMessages() {
     if (!file)
         std::cout<<"empty\n\n";
     else{
-        std::vector<std::shared_ptr<Message>> mesaje = User::loadMessages(file_name);
+        const auto& mesaje = User::loadMessages();
         std::cout<<"\n"; rlutil::setColor(2);
         for (auto & mesaj_curent : mesaje)
             std::cout<<*mesaj_curent;
@@ -584,7 +578,8 @@ void User::showMessages() {
     }
 }
 
-std::vector<std::shared_ptr<Message>> User::loadMessages(const std::string& file_name) {
+std::vector<std::shared_ptr<Message>> User::loadMessages() const{
+    std::string file_name = "../txt_files/User/" + getEmail() + "_messages.txt";
     std::vector<std::shared_ptr<Message>> mesaje;
     std::ifstream file;
     file.open(file_name);
@@ -623,6 +618,18 @@ std::vector<std::shared_ptr<Message>> User::loadMessages(const std::string& file
     }
     file.close();
     return mesaje;
+}
+
+void User::updateFileFromTemp() const {
+    int result = remove("../txt_files/User/users.txt");
+    result = rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
+    result = remove("../txt_files/User/temporary.txt");
+
+    if (result){
+        rlutil::setColor(4);
+        std::cout<<"\n\tPassword changed!\n";
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
 }
 
 
