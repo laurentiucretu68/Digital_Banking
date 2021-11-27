@@ -13,16 +13,12 @@ class Admin{
     std::string username{};
     std::string email{};
     std::string parola{};
-    void processingMessage(const User&, unsigned short&);
+    static void processingMessage(const std::shared_ptr<User>&, unsigned short&) ;
 
 public:
     Admin()= default;
 
-    Admin(const Admin& copie);
-
     Admin& operator=(const Admin& copie);
-
-    friend std::ostream &operator<<(std::ostream &os, const Admin &admin);
 
     const std::string &getUsername() const;
 
@@ -32,11 +28,11 @@ public:
 
     void setParola(const std::string &parola_copie);
 
-    void showAllUsers(unsigned short&);
+    void showAllUsers(unsigned short&) const;
 
-    void showUser(const UserBusiness&);
+    void showUser(const std::shared_ptr<User>& user) const;
 
-    void sendMessage(const UserBusiness&);
+    void sendMessage(const std::shared_ptr<User>& user) const;
 
 };
 

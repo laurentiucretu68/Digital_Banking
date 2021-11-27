@@ -21,6 +21,8 @@ protected:
     int CIV{};
     float suma{};
 
+    virtual void updateUserInFile(std::ostream& os);
+
 public:
 
     User()= default;
@@ -41,15 +43,13 @@ public:
                                                                        messages(std::move(messages)),
                                                                        CIV(civ), suma(suma) {}
 
-    friend std::ostream &operator<<(std::ostream &os, const User &user);
+    friend std::ostream &operator<<(std::ostream &os, const std::shared_ptr<User>& user);
 
     virtual void writeUserInFile();
 
     const std::string &getNumePrenume() const;
 
     void setNumePrenume(const std::string &numePrenume);
-
-    const std::string &getParola() const;
 
     void setParola(const std::string &parola_copie);
 
@@ -77,7 +77,7 @@ public:
 
     void setCiv(int civ);
 
-    virtual void changePassword() const;
+    void changePassword();
 
     void showTransactionsHistory() const;
 
@@ -91,14 +91,15 @@ public:
 
     float makeTansactionCase1();
 
-    virtual void updateBalance(const float&);
+    void updateBalance(const float&);
 
     bool checkDuplicateIBAN(const std::string &IBAN);
 
     User returnUser(const std::string &IBAN);
 
-    void updateFileFromTemp() const;
+    static void updateFileFromTemp();
 
+    virtual void showInfo(std::ostream &os) const;
 };
 
 

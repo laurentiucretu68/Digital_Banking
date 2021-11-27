@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "User.h"
-#include "rlutil.h"
+#include "../libraries/rlutil.h"
 
 class UserBusiness : public User{
     std::string numeCompanie{};
@@ -15,16 +15,8 @@ public:
 
     void writeUserInFile() override;
 
-    const std::string &getNumeCompanie() const;
+    void showInfo(std::ostream &os) const override;
 
-    const std::string &getCui() const;
-
-    void setNumeCompanie(const std::string &numeCompanie);
-
-    void setCui(const std::string &cui);
-
-    void updateBalance(const float&) override;
-
-    void changePassword() const override;
+    void updateUserInFile(std::ostream& os) override;
 };
 

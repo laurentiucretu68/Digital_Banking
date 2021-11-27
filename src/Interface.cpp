@@ -1,24 +1,33 @@
 #include "../includes/Admin.h"
 #include "../includes/Interface.h"
+#include "../libraries/hasher.hpp"
+#include "../libraries/digestpp.hpp"
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <chrono>
 #include <thread>
 #include <regex>
+#include <sstream>
+
+#define setBlue rlutil::setColor(1)
+#define setGreen rlutil::setColor(2)
+#define setCyan rlutil::setColor(3)
+#define setRed rlutil::setColor(4)
+#define setLightMagenta rlutil::setColor(13)
+#define setWhite rlutil::setColor(15)
+
 
 void Interface::startApp() {
-    rlutil::setColor(13);
-    rlutil::setBackgroundColor(0);
+    setLightMagenta;
     std::cout<<"\t---------------------------------";
-    std::cout<<"\n \t| **** Digital Banking App **** |\n";
+    std::cout<<"\n\t| **** Digital Banking App **** |\n";
     std::cout<<"\t---------------------------------\n\n";
-    rlutil::setColor(2);
+    setBlue;
     std::cout<<"\t[1] Login"<<'\n';
     std::cout<<"\t[2] Sign up"<<'\n';
     std::cout<<"\t[3] Exit"<<"\n\n";
-
-    rlutil::setColor(1);
+    setBlue;
     std::cout<<"\tPlease select your choice: ";
 
     unsigned short option;
@@ -26,42 +35,48 @@ void Interface::startApp() {
         switch (option) {
             case 1:{
                 login();
-                return;
+                break;
             }
             case 2:{
                 signup();
-                return;
+                break;
             }
             case 3:{
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tClosing the app...\n\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                return;
+                exit(0);
             }
             default:{
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tIncorrect option!\n";
-                rlutil::setColor(1);
-                std::cout<<"\n\tPlease select your choice: ";
+                break;
             }
         }
+        setLightMagenta;
+        std::cout<<"\t---------------------------------";
+        std::cout<<"\n\t| **** Digital Banking App **** |\n";
+        std::cout<<"\t---------------------------------\n\n";
+        setGreen;
+        std::cout<<"\t[1] Login"<<'\n';
+        std::cout<<"\t[2] Sign up"<<'\n';
+        std::cout<<"\t[3] Exit"<<"\n\n";
+        setBlue;
+        std::cout<<"\tPlease select your choice: ";
     }
 }
 
 void Interface::signup() {
-    rlutil::setColor(13);
-    rlutil::setBackgroundColor(0);
+    setLightMagenta;
     std::cout<<"\n\tSign up\n";
-    rlutil::setColor(2);
+    setGreen;
     std::cout<<"\t[1] Continue"<<'\n';
     std::cout<<"\t[2] Back to main panel\n\n";
-
-    rlutil::setColor(1);
+    setBlue;
     std::cout<<"\tPlease select your choice: ";
 
     unsigned short option;
-    rlutil::setColor(2);
-
+    setGreen;
     while (std::cin>>option){
         switch(option) {
             case 1: {
@@ -69,16 +84,21 @@ void Interface::signup() {
                 return;
             }
             case 2: {
-                startApp();
                 return;
             }
             default: {
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tIncorrect option!\n";
-                rlutil::setColor(1);
-                std::cout<<"\n\tPlease select your choice: ";
+                break;
             }
         }
+        setLightMagenta;
+        std::cout<<"\n\tSign up\n";
+        setGreen;
+        std::cout<<"\t[1] Continue"<<'\n';
+        std::cout<<"\t[2] Back to main panel\n\n";
+        setBlue;
+        std::cout<<"\tPlease select your choice: ";
     }
 }
 
@@ -96,20 +116,20 @@ void Interface::signupProcess() {
 
     bool cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\tEmail: "; std::getline(std::cin,email);
         if (checkPatternEmail(email)){
             if (checkDuplicateEmail(email)){
                 cond = true;
             }
             else{
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tEmail already exist! Try again...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
         }
         else{
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tInvalid email address! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -118,10 +138,10 @@ void Interface::signupProcess() {
 
     cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\tPassword: "; std::getline(std::cin,password);
         if (password.length()<7){
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tPassword must contain at least 7 characters!\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -131,10 +151,10 @@ void Interface::signupProcess() {
 
     cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\tRepeat password: "; std::getline(std::cin,repeat_password);
         if (password != repeat_password){
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tPassword and Repeat Password don't match! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -144,19 +164,19 @@ void Interface::signupProcess() {
 
     cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\tPhone Number (Format: 07********): "; std::getline(std::cin,phone);
         if (checkPatternPhone(phone)){
             if (checkDuplicatePhone(phone))
                 cond = true;
             else{
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tPhone number already exist! Try again...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
         }
         else{
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tInvalid phone format! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -164,34 +184,34 @@ void Interface::signupProcess() {
 
     cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\tIBAN (Example: RO35RZBR4421944568612335): "; std::cin>>IBAN;
         if (checkPatternIBAN(IBAN)){
             if (checkDuplicateIBAN(IBAN))
                 cond = true;
             else{
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tIBAN already exist! Try again...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
         }
         else{
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tInvalid IBAN format! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
-    rlutil::setColor(2);
+    setGreen;
     std::cout<<"\n\tExpiration date: ";
     cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\t\tMonth: "; std::cin>>exp_date.first;
         if (exp_date.first >=1 && exp_date.first<=12)
             cond = true;
         else{
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tInvalid month! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -199,12 +219,12 @@ void Interface::signupProcess() {
 
     cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\t\tYear (two digits): "; std::cin>>exp_date.second;
         if (exp_date.second >=22 && exp_date.second <=30)
             cond = true;
         else{
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tInvalid year! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -212,43 +232,42 @@ void Interface::signupProcess() {
 
     cond = false;
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\tCIV: "; std::cin>>civ;
         if (civ >=100 && civ <=999)
             cond = true;
         else{
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tInvalid CIV! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
     std::string numeCompanie{};
-    rlutil::setColor(2);
+    setGreen;
     std::cin.get();
     std::cout<<"\n\tNume companie (scrie 0 pentru persoana fizica): "; std::getline(std::cin,numeCompanie);
 
     cond = false;
     std::string cui{};
     while (!cond){
-        rlutil::setColor(2);
+        setGreen;
         std::cout<<"\n\tCUI (scrie 0 pentru persoana fizica): "; std::cin>>cui;
         static const std::regex pattern("([0-9]*)");
         if (std::regex_match(cui, pattern))
             cond = true;
         else{
-            rlutil::setColor(4);
+            setRed;
             std::cout<<"\n\tInvalid CUI format! Try again...\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
-    std::default_random_engine generator;
-    std::uniform_real_distribution<float> distribution(100,5000);
+    static std::default_random_engine generator;
+    static std::uniform_real_distribution<float> distribution(100,5000);
     float suma = distribution(generator);
 
-    std::hash<std::string> hash_pass;
-    password = std::to_string(hash_pass(password));
+    password = digestpp::blake2b(256).absorb(password).hexdigest();
     User u(name, password, email, phone, IBAN, exp_date, std::vector<std::shared_ptr<Tranzactie>>(),std::vector<std::shared_ptr<Message>>(),civ,suma);
 
     if (numeCompanie!="0" && cui!="0"){
@@ -260,12 +279,11 @@ void Interface::signupProcess() {
     else
         u.writeUserInFile();
 
-    rlutil::setColor(3);
+    setCyan;
     std::cout<<"\n\tCreating account...";
     std::this_thread::sleep_for(std::chrono::seconds(2));
     std::cout<<"\n\tDone\n\n";
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    startApp();
 }
 
 bool Interface::checkDuplicateEmail(const std::string &email) {
@@ -359,20 +377,16 @@ bool Interface::checkPatternIBAN(const std::string &IBAN) {
 }
 
 void Interface::login() {
-    rlutil::setColor(13);
-    rlutil::setBackgroundColor(0);
+    setLightMagenta;
     std::cout<<"\n\tLogin\n";
-    rlutil::setColor(2);
-
+    setGreen;
     std::cout<<"\t[1] Continue"<<'\n';
     std::cout<<"\t[2] Back to main panel\n\n";
-
-    rlutil::setColor(1);
+    setBlue;
     std::cout<<"\tPlease select your choice: ";
+    setGreen;
 
     unsigned short option;
-    rlutil::setColor(2);
-
     while (std::cin>>option){
         switch(option) {
             case 1: {
@@ -381,10 +395,9 @@ void Interface::login() {
                 unsigned short tip=0;
                 std::cout<<"\n\tEmail/Username (for admins): "; std::cin>>email;
                 std::cout<<"\n\tPassword: ";    std::cin>>password;
-                std::hash<std::string> hash_pass;
-                password = std::to_string(hash_pass(password));
+                password = digestpp::blake2b(256).absorb(password).hexdigest();
                 if (checkEmailPasswordLogin(email,password,tip)){
-                    rlutil::setColor(3);
+                    setCyan;
                     std::cout<<"\n\tLogin Succesful!\n\n";
                     std::this_thread::sleep_for(std::chrono::seconds(2));
                     if (tip==2)
@@ -393,24 +406,29 @@ void Interface::login() {
                         loginUser(email);
                 }
                 else{
-                    rlutil::setColor(4);
+                    setRed;
                     std::cout<<"\n\tWrong email/username(for admins) or password...\n";
                     std::this_thread::sleep_for(std::chrono::seconds(1));
-                    login();
                 }
                 return;
             }
             case 2: {
-                startApp();
                 return;
             }
             default: {
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tIncorrect option!\n";
-                rlutil::setColor(1);
-                std::cout<<"\n\tPlease select your choice: ";
+                break;
             }
         }
+        setLightMagenta;
+        std::cout<<"\n\tLogin\n";
+        setGreen;
+        std::cout<<"\t[1] Continue"<<'\n';
+        std::cout<<"\t[2] Back to main panel\n\n";
+        setBlue;
+        std::cout<<"\tPlease select your choice: ";
+        setGreen;
     }
 }
 
@@ -419,14 +437,13 @@ void Interface::loginUser(const std::string &email) {
     std::fstream write;
     write.open("../txt_files/User/users.txt",std::fstream::in);
     std::string line;
-    while (std::getline(write, line)){
+    while (std::getline(write, line)) {
         std::istringstream iss(line);
         std::string word;
         std::getline(iss, word, ';');
-
         std::string nume(word);
         std::getline(iss, word, ';');
-        if (word == email){
+        if (word == email) {
             user.setNumePrenume(nume);
             user.setEmail(email);
 
@@ -447,9 +464,9 @@ void Interface::loginUser(const std::string &email) {
             user.setCiv(stoi(word));
 
             std::getline(iss, word, ';');
-            user.setSuma((float)stof(word));
+            user.setSuma((float) stof(word));
 
-            std::pair<unsigned short , unsigned short> temp;
+            std::pair<unsigned short, unsigned short> temp;
             std::istringstream iss1(aux);
             std::string date;
             std::getline(iss1, date, '/');
@@ -459,15 +476,18 @@ void Interface::loginUser(const std::string &email) {
             user.setExpDate(temp);
 
             std::string numeCompanie, cui;
-            if(std::getline(iss, word, ';')){
+            if (std::getline(iss, word, ';')) {
                 numeCompanie = word;
                 std::getline(iss, word, ';');
                 cui = word;
+                UserBusiness ub_var(user, numeCompanie, cui);
+                std::shared_ptr<User> us_ptr = std::make_shared<User>(ub_var);
+                panelUser(us_ptr);
+            } else {
+                std::shared_ptr<User> us_ptr = std::make_shared<User>(user);
+                panelUser(us_ptr);
             }
-            UserBusiness ub(user,numeCompanie,cui);
-
             write.close();
-            panelUser(ub);
             break;
         }
     }
@@ -546,111 +566,61 @@ bool Interface::checkEmailPasswordLogin(const std::string& email, const std::str
     return false;
 }
 
-void Interface::panelUser(UserBusiness &user) {
-    rlutil::setColor(13);
-    rlutil::setBackgroundColor(0);
-    std::cout<<"\t---------------------------------";
-    std::cout<<"\n\t| **** Digital Banking App **** |\n";
-    std::cout<<"\t---------------------------------\n\n";
-    std::cout<<"\tWelcome back "<<user.getNumePrenume()<<"!\n";
-    std::cout<<"\tYour balance: "<<user.getSuma()<<"lei"<<"\n\n";
-    rlutil::setColor(2);
-    std::cout<<"\tInfo:\n";
-    std::cout<<"\t Email: "<<user.getEmail()<<"\n";
-    std::cout<<"\t Phone number: "<<user.getTelefon()<<"\n";
-    std::cout<<"\t IBAN: "<<user.getIban()<<"\n";
-    std::pair<unsigned short, unsigned short> date_aux = user.getExpDate();
-    std::cout<<"\t Date exp: "<<date_aux.first<<"/"<<date_aux.second<<"\n";
-    std::cout<<"\t CIV: "<<user.getCiv()<<"\n";
-    if (!user.getNumeCompanie().empty()){
-        std::cout<<"\t Nume companie: "<<user.getNumeCompanie()<<"\n";
-        std::cout<<"\t CUI: "<<user.getCui()<<"\n\n";
-    }
-    else
-        std::cout<<"\n";
-
-    rlutil::setColor(15);
-    std::cout<<"\tMeniu:\n";
-    std::cout<<"\t [1] Show transactions history\n";
-    std::cout<<"\t [2] Show messages\n";
-    std::cout<<"\t [3] Send money\n";
-    std::cout<<"\t [4] Change password\n";
-    std::cout<<"\t [5] Logout\n";
-
-    rlutil::setColor(1);
-    std::cout<<"\n\tPlease select your choice: ";
-
+void Interface::panelUser(const std::shared_ptr<User>& user) {
+    Interface::showMenuPanelUser(user);
     unsigned short option;
-    rlutil::setColor(2);
-
     while (std::cin>>option){
         switch(option) {
             case 1: {
-                user.showTransactionsHistory();
-                Interface::panelUser(user);
-                return;
+                user->showTransactionsHistory();
+                break;
             }
             case 2: {
-                user.showMessages();
-                Interface::panelUser(user);
-                return;
+                user->showMessages();
+                break;
             }
             case 3: {
-                float suma_tranzactie = user.makeTransaction();
-                if (!user.getNumeCompanie().empty()){
-                    std::shared_ptr<UserBusiness> ub_aux;
-                    ub_aux = std::make_shared<UserBusiness>(user);
-                    ub_aux->updateBalance(ub_aux->getSuma() - suma_tranzactie);
-                }
-                else
-                    user.updateBalance(user.getSuma() - suma_tranzactie);
-                Interface::loginUser(user.getEmail());
-                return;
+                float suma_tranzactie = user->makeTransaction();
+                user->updateBalance(user->getSuma() - suma_tranzactie);
+                break;
             }
             case 4: {
-                if (!user.getNumeCompanie().empty()){
-                    std::shared_ptr<UserBusiness> ub_aux;
-                    ub_aux = std::make_shared<UserBusiness>(user);
-                    ub_aux->changePassword();
-                }
-                else
-                    user.changePassword();
-                panelUser(user);
-                return;
+                user->changePassword();
+                break;
             }
             case 5: {
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tPlease wait...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(2));
-                startApp();
                 return;
             }
             default: {
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tIncorrect option!\n";
-                rlutil::setColor(1);
+                setBlue;
                 std::cout<<"\n\tPlease select your choice: ";
+                break;
             }
         }
+        Interface::showMenuPanelUser(user);
     }
 }
 
 void Interface::panelAdmin(Admin& admin) {
-    rlutil::setColor(13);
-    rlutil::setBackgroundColor(0);
+    setLightMagenta;
     std::cout<<"\t---------------------------------";
     std::cout<<"\n\t| **** Digital Banking App **** |\n";
     std::cout<<"\t---------------------------------\n\n";
     std::cout<<"\tWelcome back "<<admin.getUsername()<<"!\n\n";
-    rlutil::setColor(2);
+    setGreen;
     std::cout<<"\t[1] Show all users"<<'\n';
     std::cout<<"\t[2] Logout\n\n";
 
-    rlutil::setColor(1);
+    setBlue;
     std::cout<<"\tPlease select your choice: ";
 
     unsigned short option;
-    rlutil::setColor(2);
+    setGreen;
 
     while (std::cin>>option){
         switch(option) {
@@ -662,18 +632,47 @@ void Interface::panelAdmin(Admin& admin) {
                 return;
             }
             case 2: {
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tPlease wait...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(2));
                 startApp();
                 return;
             }
             default: {
-                rlutil::setColor(4);
+                setRed;
                 std::cout<<"\n\tIncorrect option!\n";
-                rlutil::setColor(1);
+                setBlue;
                 std::cout<<"\n\tPlease select your choice: ";
             }
         }
     }
+}
+
+void Interface::showMenuPanelUser(const std::shared_ptr<User> &user) {
+    setLightMagenta;
+    std::cout<<"\t---------------------------------";
+    std::cout<<"\n\t| **** Digital Banking App **** |\n";
+    std::cout<<"\t---------------------------------\n\n";
+    std::cout<<"\tWelcome back "<<user->getNumePrenume()<<"!\n";
+    std::cout<<"\tYour balance: "<<user->getSuma()<<"lei"<<"\n\n";
+    setGreen;
+    std::cout<<"\tInfo:\n";
+    std::cout<<"\t Email: "<<user->getEmail()<<"\n";
+    std::cout<<"\t Phone number: "<<user->getTelefon()<<"\n";
+    std::cout<<"\t IBAN: "<<user->getIban()<<"\n";
+    std::pair<unsigned short, unsigned short> date_aux = user->getExpDate();
+    std::cout<<"\t Date exp: "<<date_aux.first<<"/"<<date_aux.second<<"\n";
+    std::cout<<"\t CIV: "<<user->getCiv()<<"\n";
+    user->showInfo(std::cout);
+    setWhite;
+    std::cout<<"\n\tMeniu:\n";
+    std::cout<<"\t [1] Show transactions history\n";
+    std::cout<<"\t [2] Show messages\n";
+    std::cout<<"\t [3] Send money\n";
+    std::cout<<"\t [4] Change password\n";
+    std::cout<<"\t [5] Logout\n";
+    setBlue;
+    std::cout<<"\n\tPlease select your choice: ";
+    setGreen;
+    setWhite;
 }

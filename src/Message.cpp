@@ -1,6 +1,9 @@
 #include "../includes/Message.h"
 #include <iostream>
-#include "../includes/rlutil.h"
+#include "../libraries/rlutil.h"
+
+#define setCyan rlutil::setColor(3)
+#define setBrown rlutil::setColor(6)
 
 
 void Message::setDestinatar(const std::string &destinatar_copie) {
@@ -33,7 +36,7 @@ void Message::writeInFile(std::fstream &file) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Message &messages) {
-    rlutil::setColor(3);
+    setCyan;
     os<< "\n\t* Mesaj de tip ";
     if (messages.tip_mesaj == 1)
         os << "warning";
@@ -43,7 +46,7 @@ std::ostream &operator<<(std::ostream &os, const Message &messages) {
         os << "notification";
 
     os<<" ("<< messages.getData().zi<<"."<<messages.getData().luna<<"."<<messages.getData().an<<" ora "<<messages.getData().ora<<"):\n";
-    rlutil::setColor(6);
+    setBrown;
     os<<"\t\t"<<messages.getMesaj()<<"\n\n";
     return os;
 }

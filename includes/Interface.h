@@ -8,7 +8,7 @@
 #include <ctime>
 #include <regex>
 #include "Admin.h"
-#include "rlutil.h"
+#include "../libraries/rlutil.h"
 
 class Interface{
     /// metodele de Signup
@@ -32,7 +32,9 @@ class Interface{
 
     /// metodele panel
     void panelAdmin(Admin&);
-    void panelUser(UserBusiness&);
+
+    void panelUser(const std::shared_ptr<User>&);
+    static void showMenuPanelUser(const std::shared_ptr<User>& user);
 
 public:
     /// metoda de Startup
