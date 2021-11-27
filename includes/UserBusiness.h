@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include "User.h"
-#include "../libraries/rlutil.h"
 
 class UserBusiness : public User{
     std::string numeCompanie{};
