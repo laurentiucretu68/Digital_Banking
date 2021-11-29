@@ -1,6 +1,5 @@
 #include "../includes/Admin.h"
 #include "../includes/Interface.h"
-#include "../libraries/hasher.hpp"
 #include "../libraries/digestpp.hpp"
 #include "../libraries/rlutil.h"
 #include <iostream>
