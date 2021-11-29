@@ -1,7 +1,6 @@
 #include "../includes/User.h"
 #include "../includes/UserBusiness.h"
 #include "../libraries/rlutil.h"
-#include "../libraries/hasher.hpp"
 #include "../libraries/digestpp.hpp"
 #include <iostream>
 #include <fstream>
