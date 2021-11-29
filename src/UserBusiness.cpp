@@ -12,12 +12,11 @@
 
 void UserBusiness::writeUserInFile() {
     try{
+        User::writeUserInFile();
         std::fstream write;
         write.open("../txt_files/User/users.txt",std::fstream::app);
         write.exceptions(std::ifstream::badbit);
-        write<< nume_prenume<<';'<<email<<';'<<parola<<';';
-        write<< telefon<<';'<<IBAN<<';'<<exp_date.first<<'/'<<exp_date.second<<';';
-        write<< CIV<<';'<<suma<<';'<<numeCompanie<<';'<<CUI<<'\n';
+        write<<';'<<numeCompanie<<';'<<CUI;
 
         write.close();
         write.open("../txt_files/User/users.txt",std::fstream::app);

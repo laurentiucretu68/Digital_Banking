@@ -1,8 +1,7 @@
 #include "../includes/User.h"
 #include "../includes/UserBusiness.h"
-#include "../libraries/rlutil.h"
-#include "../libraries/hasher.hpp"
 #include "../libraries/digestpp.hpp"
+#include "../libraries/rlutil.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -79,9 +78,9 @@ void User::writeUserInFile() {
         std::fstream write;
         write.open("../txt_files/User/users.txt",std::fstream::app);
         write.exceptions(std::ifstream::badbit);
-        write<< nume_prenume<<';'<<email<<';'<<parola<<';';
+        write<<'\n'<< nume_prenume<<';'<<email<<';'<<parola<<';';
         write<< telefon<<';'<<IBAN<<';'<<exp_date.first<<'/'<<exp_date.second<<';';
-        write<< CIV<<';'<<suma<<'\n';
+        write<< CIV<<';'<<suma;
         write.close();
         write.open("../txt_files/User/users.txt",std::fstream::app);
         write.close();
@@ -96,40 +95,16 @@ const std::string &User::getNumePrenume() const {
     return nume_prenume;
 }
 
-void User::setNumePrenume(const std::string &numePrenume) {
-    nume_prenume = numePrenume;
-}
-
-void User::setParola(const std::string &parola_copie) {
-    User::parola = parola_copie;
-}
-
 const std::string &User::getEmail() const {
     return email;
-}
-
-void User::setEmail(const std::string &email_copie) {
-    User::email = email_copie;
 }
 
 const std::string &User::getTelefon() const {
     return telefon;
 }
 
-void User::setTelefon(const std::string &telefon_copie) {
-    User::telefon = telefon_copie;
-}
-
-void User::setIban(const std::string &iban) {
-    IBAN = iban;
-}
-
 const std::pair<unsigned short, unsigned short> &User::getExpDate() const {
     return exp_date;
-}
-
-void User::setExpDate(const std::pair<unsigned short, unsigned short> &expDate) {
-    exp_date = expDate;
 }
 
 const std::string &User::getIban() const {
@@ -140,16 +115,8 @@ float User::getSuma() const {
     return suma;
 }
 
-void User::setSuma(float suma_copie) {
-    User::suma = suma_copie;
-}
-
 int User::getCiv() const {
     return CIV;
-}
-
-void User::setCiv(int civ) {
-    CIV = civ;
 }
 
 void User::updateBalance(const float &suma_tranzactie) {
@@ -159,42 +126,32 @@ void User::updateBalance(const float &suma_tranzactie) {
         old_file.open("../txt_files/User/users.txt",std::fstream::in);
         old_file.exceptions(std::ifstream::badbit);
         std::string line;
+        int contor = 0;
+        std::regex separator("\\;");
+
         while (std::getline(old_file, line)){
             const std::string& copy(line);
-            std::istringstream iss(line);
-            std::string word, aux_nume;
-            std::getline(iss, word, ';');
-            aux_nume = word;
-            std::getline(iss, word, ';');
-            if (word == email){
-                new_file<<aux_nume<<";"<<word<<";";
-                std::getline(iss, word, ';');
+            std::vector<std::string> out(
+                    std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                    std::sregex_token_iterator()
+            );
+            if (out[1] == email){
+                if (contor!=0)
+                    new_file<<'\n';
 
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-
-                new_file<<suma_tranzactie<<";";
-
-                User::updateUserInFile(new_file);
-
-                new_file<<"\n";
+                for (int i = 0; i<7; i++)
+                    new_file << out[i] << ";";
+                new_file << suma_tranzactie <<";";
+                if (out.size() > 8)
+                    new_file << out[8] << ";" << out[9] << ";";
             }
-            else
-                new_file<<copy<<'\n';
+            else{
+                if (contor!=0)
+                    new_file<<'\n';
+                new_file<<copy;
+            }
+            contor++;
         }
-
         old_file.close(); new_file.close();
         updateFileFromTemp();
     }
@@ -224,12 +181,10 @@ void User::showTransactionsHistory() const{
 
         setBlue;
         std::cout<<"\n\tGo back to all users panel - type 1\n\n";
-
         std::cout<<"\tPlease select your choice: ";
 
         unsigned short option;
         setGreen;
-
         while (std::cin>>option){
             if (option==1){
                 setRed;
@@ -259,40 +214,21 @@ std::vector<std::shared_ptr<Tranzactie>> User::loadTransactionsHistory() const{
         file.open(file_name);
         file.exceptions(std::ifstream::badbit);
         std::string line;
+        std::regex separator("\\;");
 
         while (std::getline(file, line)){
-            Tranzactie tranzactie_curenta;
-            std::istringstream iss(line);
-            std::string word;
-
-            std::getline(iss, word, ';');
-            tranzactie_curenta.setDestinatar(word);
-
-            std::getline(iss, word, ';');
-            tranzactie_curenta.setIbanDestinatar(word);
-
-            std::getline(iss, word, ';');
-            tranzactie_curenta.setSumaTrimisa(stof(word));
-
+            std::vector<std::string> out(
+                    std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                    std::sregex_token_iterator()
+            );
             data_str data_cp{};
+            data_cp.zi = (unsigned short)stoi(out[2]);
+            data_cp.luna = (unsigned short)stoi(out[3]);
+            data_cp.an = (unsigned short)stoi(out[4]);
+            data_cp.ora = (unsigned short)stoi(out[5]);
 
-            std::getline(iss, word, ';');
-            data_cp.zi = (unsigned short)stoi(word);
-
-            std::getline(iss, word, ';');
-            data_cp.luna = (unsigned short)stoi(word);
-
-            std::getline(iss, word, ';');
-            data_cp.an = (unsigned short)stoi(word);
-
-            std::getline(iss, word, ';');
-            data_cp.ora = (unsigned short)stoi(word);
-
-            tranzactie_curenta.setData(data_cp);
-
-            std::getline(iss, word, ';');
-            tranzactie_curenta.setType(word);
-
+            Tranzactie tranzactie_curenta(out[0], out[1], out[out.size() - 1],
+                                          stof(out[2]), data_cp);
             transactions.emplace_back(std::make_shared<Tranzactie>(tranzactie_curenta));
         }
         file.close();
@@ -317,13 +253,13 @@ float User::makeTransaction() {
     setGreen;
     while (std::cin>>option){
         if (option == 1) {
-                float suma_ = makeTansactionCase1();
-                setRed;
-                std::cout<<"\n\tPlease wait... ";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout<<"Success!\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                return suma_;
+            float suma_ = makeTansactionCase1();
+            setRed;
+            std::cout<<"\n\tPlease wait... ";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::cout<<"Success!\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            return suma_;
         }
         else{
             if (option == 2)
@@ -366,12 +302,11 @@ float User::makeTansactionCase1() {
     while (!cond){
         setGreen;
         std::cout<<"\n\tEnter the IBAN: "; std::cin>>IBAN_dest;
-        Tranzactie tran;
-        if (tran.checkPatternIBAN(IBAN_dest) && IBAN_dest!=IBAN){
+        if (Tranzactie::checkPatternIBAN(IBAN_dest) && IBAN_dest!=IBAN){
             cond = true;
             if (checkDuplicateIBAN(IBAN_dest)){
-                User user_aux = returnUser(IBAN_dest);
-                user_aux.updateBalance(user_aux.suma + suma_);
+                std::shared_ptr<User> user_aux = returnUser(IBAN_dest);
+                user_aux->updateBalance(user_aux->suma + suma_);
 
                 time_t theTime = time(nullptr);
                 struct tm *aTime = localtime(&theTime);
@@ -380,19 +315,14 @@ float User::makeTansactionCase1() {
                 an = aTime->tm_year + 1900;
                 ora = aTime->tm_hour;
 
-
-                tran.setDestinatar(nume_prenume);
-                tran.setIbanDestinatar(IBAN);
-                tran.setSumaTrimisa(suma_);
                 data_str data_cp{};
                 data_cp.zi = zi;
                 data_cp.luna = luna;
                 data_cp.an = an;
                 data_cp.ora = ora;
-                tran.setData(data_cp);
-                tran.setType("recived");
 
-                std::string file_name = "../txt_files/User/" + user_aux.email + "_transactions.txt";
+                Tranzactie tran(nume_prenume, IBAN, "recived", suma_, data_cp);
+                std::string file_name = "../txt_files/User/" + user_aux->email + "_transactions.txt";
                 std::fstream file;
                 file.open(file_name,std::fstream::app);
                 if (!file) {
@@ -420,18 +350,13 @@ float User::makeTansactionCase1() {
     an = aTime->tm_year + 1900;
     ora = aTime->tm_hour;
 
-    Tranzactie tran;
-    tran.setDestinatar(destinatar);
-    tran.setIbanDestinatar(IBAN_dest);
-    tran.setSumaTrimisa(suma_);
     data_str data_cp{};
     data_cp.zi = zi;
     data_cp.luna = luna;
     data_cp.an = an;
     data_cp.ora = ora;
-    tran.setData(data_cp);
-    tran.setType("sent");
 
+    Tranzactie tran(destinatar, IBAN_dest, "sent", suma_, data_cp);
     std::string file_name = "../txt_files/User/" + email + "_transactions.txt";
     std::fstream file;
     file.open(file_name,std::fstream::app);
@@ -447,42 +372,45 @@ float User::makeTansactionCase1() {
     return suma_;
 }
 
-User User::returnUser(const std::string &IBAN_) {
+std::shared_ptr<User> User::returnUser(const std::string &IBAN_) {
     std::fstream file;
     file.open("../txt_files/User/users.txt",std::fstream::in);
-    std::string nume_cp, email_cp, parola_cp, telefon_cp, IBAN_cp;
-    std::pair<unsigned short, unsigned short> exp_date_cp;
-    int CIV_cp;
-    float suma_cp;
     std::string line;
+    std::regex separator("\\;");
+
     while (std::getline(file, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';'); nume_cp = word;
-        std::getline(iss, word, ';'); email_cp = word;
-        std::getline(iss, word, ';'); parola_cp = word;
-        std::getline(iss, word, ';'); telefon_cp = word;
-        std::getline(iss, word, ';'); IBAN_cp = word;
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (out[4] == IBAN_){
+            std::istringstream iss(out[5]);
+            std::string date;
+            std::getline(iss, date, '/');
+            std::pair<unsigned short, unsigned short> exp_date_cp;
+            exp_date_cp.first = stoi(date);
+            std::getline(iss, date, '/');
+            exp_date_cp.second = stoi(date);
 
-        std::getline(iss, word, ';');
-        std::string aux(word);
+            User user(out[0], out[2], out[1], out[3], out[4], exp_date_cp,
+                      std::vector<std::shared_ptr<Tranzactie>>(),
+                      std::vector<std::shared_ptr<Message>>(),
+                      std::stoi(out[6]), std::stof(out[7]));
 
-        std::getline(iss, word, ';'); CIV_cp = stoi(word);
-        std::getline(iss, word, ';');  suma_cp = stof(word);
-
-        std::istringstream iss1(aux);
-        std::string date;
-        std::getline(iss1, date, '/');
-        exp_date_cp.first = stoi(date);
-        std::getline(iss1, date, '/');
-        exp_date_cp.second = stoi(date);
-
-        if (IBAN_cp == IBAN_)
-            break;
+            if (out.size() > 8) {
+                UserBusiness ub_var(user, out[8], out[9]);
+                std::shared_ptr<User> us_ptr = std::make_shared<UserBusiness>(ub_var);
+                file.close();
+                return us_ptr;
+            } else {
+                std::shared_ptr<User> us_ptr = std::make_shared<User>(user);
+                file.close();
+                return us_ptr;
+            }
+        }
     }
     file.close();
-    User user(nume_cp, parola_cp, email_cp, telefon_cp, IBAN_cp, exp_date_cp, std::vector<std::shared_ptr<Tranzactie>>(), std::vector<std::shared_ptr<Message>>(), CIV_cp,suma_cp);
-    return user;
+    return {};
 }
 
 bool User::checkDuplicateIBAN(const std::string &IBAN_) {
@@ -491,15 +419,14 @@ bool User::checkDuplicateIBAN(const std::string &IBAN_) {
     std::fstream login;
     login.open("../txt_files/User/users.txt",std::fstream::in);
     std::string line;
+    std::regex separator("\\;");
+
     while (std::getline(login, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        if (IBAN_copy==word)
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (IBAN_copy==out[4])
             return true;
     }
     login.close();
@@ -557,37 +484,39 @@ void User::changePassword() {
         std::ofstream new_file ("../txt_files/User/temporary.txt");
         old_file.open("../txt_files/User/users.txt",std::fstream::in);
         std::string line;
+        int contor = 0;
+        std::regex separator("\\;");
+
         while (std::getline(old_file, line)){
             const std::string& copy(line);
-            std::istringstream iss(line);
-            std::string word;
-            std::getline(iss, word, ';');
+            std::vector<std::string> out(
+                    std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                    std::sregex_token_iterator()
+            );
 
-            if (word == getNumePrenume()){
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-                new_file<<parola_noua<<";";
-                std::getline(iss, word, ';');
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-                new_file<<word<<";";
-                std::getline(iss, word, ';');
-                new_file<<word<<";";
-                User::updateUserInFile(new_file);
-                new_file<<"\n";
+            if (out[1] == email){
+                if (contor!=0)
+                    new_file<<"\n";
+
+                new_file << out[0] << ";" << out[1] << ";" << parola_noua <<";";
+                for (int i=3; i<(int)out.size(); i++)
+                    new_file << out[i] << ";";
             }
-            else
-                new_file<<copy<<'\n';
+            else{
+                if (contor!=0)
+                    new_file<<"\n";
+                new_file<<copy;
+            }
+            contor++;
         }
 
         old_file.close(); new_file.close();
         User::updateFileFromTemp();
+        setRed;
+        std::cout<<"\n\n\tPlease wait... ";
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout<<"Success!\n";
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
@@ -645,36 +574,21 @@ std::vector<std::shared_ptr<Message>> User::loadMessages() const{
         file.open(file_name);
         file.exceptions(std::ifstream::badbit);
         std::string line;
+        std::regex separator("\\;");
 
         while (std::getline(file, line)){
-            Message mesaj_auxiliar;
-            std::istringstream iss(line);
-            std::string word;
-
-            std::getline(iss, word, ';');
-            mesaj_auxiliar.setDestinatar(word);
-
-            std::getline(iss, word, ';');
-            mesaj_auxiliar.setTipMesaj((unsigned short)stoi(word));
-
-            std::getline(iss, word, ';');
-            mesaj_auxiliar.setMesaj(word);
-
+            std::vector<std::string> out(
+                    std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                    std::sregex_token_iterator()
+            );
             data_str_mess data_cp{};
+            data_cp.zi = (unsigned short)stoi(out[3]);
+            data_cp.luna = (unsigned short)stoi(out[4]);
+            data_cp.an = (unsigned short)stoi(out[5]);
+            data_cp.ora = (unsigned short)stoi(out[6]);
 
-            std::getline(iss, word, ';');
-            data_cp.zi = (unsigned short)stoi(word);
-
-            std::getline(iss, word, ';');
-            data_cp.luna = (unsigned short)stoi(word);
-
-            std::getline(iss, word, ';');
-            data_cp.an = (unsigned short)stoi(word);
-
-            std::getline(iss, word, ';');
-            data_cp.ora = (unsigned short)stoi(word);
-
-            mesaj_auxiliar.setData(data_cp);
+            Message mesaj_auxiliar(out[0], out[2],
+                                   (unsigned short)std::stoi(out[1]), data_cp);
             mesaje.emplace_back(std::make_shared<Message>(mesaj_auxiliar));
         }
         file.close();
@@ -688,15 +602,13 @@ std::vector<std::shared_ptr<Message>> User::loadMessages() const{
 }
 
 void User::updateFileFromTemp() {
-    int result = remove("../txt_files/User/users.txt");
-    result = rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
-    result = remove("../txt_files/User/temporary.txt");
-
-    if (result){
-        setRed;
-        std::cout<<"\n\tSuccess!\n";
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-    }
+    remove("../txt_files/User/users.txt");
+    rename("../txt_files/User/temporary.txt","../txt_files/User/users.txt");
+    remove("../txt_files/User/temporary.txt");
 }
 
 void User::updateUserInFile(std::ostream &os) {}
+
+void User::setSuma(float suma_) {
+    User::suma = suma_;
+}

@@ -13,22 +13,6 @@ Tranzactie &Tranzactie::operator=(const Tranzactie &copie) {
     return *this;
 }
 
-void Tranzactie::setDestinatar(const std::string &destinatar_copie) {
-    Tranzactie::destinatar = destinatar_copie;
-}
-
-void Tranzactie::setSumaTrimisa(float sumaTrimisa) {
-    suma_trimisa = sumaTrimisa;
-}
-
-void Tranzactie::setIbanDestinatar(const std::string &ibanDestinatar_copie) {
-    IBAN_destinatar = ibanDestinatar_copie;
-}
-
-void Tranzactie::setType(const std::string &type_copie) {
-    Tranzactie::type = type_copie;
-}
-
 std::ostream &operator<<(std::ostream &os, const Tranzactie &tranzactie) {
     if (tranzactie.type == "sent")
         os <<"\n\t\tDestinatar: ";
@@ -61,6 +45,7 @@ void Tranzactie::writeInFile(std::fstream &file) {
     file<<data.zi<<";"<<data.luna<<";"<<data.an<<";"<<data.ora<<";"<<type<<"\n";
 }
 
-void Tranzactie::setData(const data_str &data_cp) {
-    Tranzactie::data = data_cp;
-}
+Tranzactie::Tranzactie(std::string &destinatar, std::string &ibanDestinatar, std::string type,
+                       float sumaTrimisa, const data_str &data) : destinatar(destinatar),
+                                                                  IBAN_destinatar(ibanDestinatar), type(type),
+                                                                  suma_trimisa(sumaTrimisa), data(data) {}

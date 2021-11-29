@@ -18,25 +18,18 @@ class Tranzactie{
     data_str data{};
 
 public:
+    Tranzactie() = default;
+
+    Tranzactie(std::string &destinatar, std::string &ibanDestinatar, std::string type,
+               float sumaTrimisa, const data_str &data);
 
     Tranzactie& operator=(const Tranzactie& copie);
 
     ~Tranzactie()= default;
 
-    void setDestinatar(const std::string &destinatar_copie);
-
-    void setSumaTrimisa(float sumaTrimisa);
-
-    void setData(const data_str &data);
-
-    void setIbanDestinatar(const std::string &ibanDestinatar_copie);
-
-    void setType(const std::string &type_copie);
-
     friend std::ostream &operator<<(std::ostream &os, const Tranzactie &tranzactie);
 
-    bool checkPatternIBAN(const std::string &IBAN);
+    static bool checkPatternIBAN(const std::string &IBAN);
 
     void writeInFile(std::fstream &file);
-
 };

@@ -45,7 +45,7 @@ std::ostream &operator<<(std::ostream &os, const Message &messages) {
     if (messages.tip_mesaj == 3)
         os << "notification";
 
-    os<<" ("<< messages.getData().zi<<"."<<messages.getData().luna<<"."<<messages.getData().an<<" ora "<<messages.getData().ora<<"):\n";
+    os<<" ("<< messages.data.zi<<"."<<messages.data.luna<<"."<<messages.data.an<<" ora "<<messages.data.ora<<"):\n";
     setBrown;
     os<<"\t\t"<<messages.getMesaj()<<"\n\n";
     return os;
@@ -55,6 +55,5 @@ void Message::setData(const data_str_mess &data_cp) {
     Message::data = data_cp;
 }
 
-const data_str_mess &Message::getData() const {
-    return data;
-}
+Message::Message(std::string &destinatar, std::string &mesaj, unsigned short tipMesaj,
+                 const data_str_mess &data) : destinatar(destinatar), mesaj(mesaj), tip_mesaj(tipMesaj), data(data) {}

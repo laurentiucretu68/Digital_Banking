@@ -17,5 +17,6 @@ public:
     void showInfo(std::ostream &os) const override;
 
     void updateUserInFile(std::ostream& os) override;
+
 };
 

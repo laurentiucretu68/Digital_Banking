@@ -1,6 +1,5 @@
 #include "../includes/Admin.h"
 #include "../includes/Interface.h"
-#include "../libraries/hasher.hpp"
 #include "../libraries/digestpp.hpp"
 #include "../libraries/rlutil.h"
 #include <iostream>
@@ -269,7 +268,9 @@ void Interface::signupProcess() {
     float suma = distribution(generator);
 
     password = digestpp::blake2b(256).absorb(password).hexdigest();
-    User u(name, password, email, phone, IBAN, exp_date, std::vector<std::shared_ptr<Tranzactie>>(),std::vector<std::shared_ptr<Message>>(),civ,suma);
+    User u(name, password, email, phone, IBAN,
+           exp_date, std::vector<std::shared_ptr<Tranzactie>>(),
+           std::vector<std::shared_ptr<Message>>(), civ, suma);
 
     if (numeCompanie!="0" && cui!="0"){
         UserBusiness ub_aux(u,numeCompanie,cui);
@@ -282,33 +283,34 @@ void Interface::signupProcess() {
 
     setCyan;
     std::cout<<"\n\tCreating account...";
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout<<"\n\tDone\n\n";
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
 bool Interface::checkDuplicateEmail(const std::string &email) {
     std::fstream login;
     login.open("../txt_files/User/users.txt",std::fstream::in);
     std::string line;
+    std::regex separator("\\;");
 
     while (std::getline(login, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        if (email == word)
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (out[1] == email)
             return false;
     }
     login.close();
 
     login.open("../txt_files/Admin/admins.txt",std::fstream::in);
     while (std::getline(login, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        if (email == word)
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (out[1] == email)
             return false;
     }
     login.close();
@@ -319,14 +321,14 @@ bool Interface::checkDuplicatePhone(const std::string &phone) {
     std::fstream login;
     login.open("../txt_files/User/users.txt",std::fstream::in);
     std::string line;
+    std::regex separator("\\;");
+
     while (std::getline(login, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        if (phone==word)
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (out[3] == phone)
             return false;
     }
     login.close();
@@ -339,15 +341,13 @@ bool Interface::checkDuplicateIBAN(const std::string &IBAN) {
     std::fstream login;
     login.open("../txt_files/User/users.txt",std::fstream::in);
     std::string line;
+    std::regex separator("\\;");
     while (std::getline(login, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        if (IBAN_copy==word)
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (out[4] == IBAN_copy)
             return false;
     }
     login.close();
@@ -400,7 +400,7 @@ void Interface::login() {
                 if (checkEmailPasswordLogin(email,password,tip)){
                     setCyan;
                     std::cout<<"\n\tLogin Succesful!\n\n";
-                    std::this_thread::sleep_for(std::chrono::seconds(2));
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
                     if (tip==2)
                         loginAdmin(email,password);
                     else
@@ -434,61 +434,39 @@ void Interface::login() {
 }
 
 void Interface::loginUser(const std::string &email) {
-    User user;
-    std::fstream write;
-    write.open("../txt_files/User/users.txt",std::fstream::in);
+    std::fstream login;
+    login.open("../txt_files/User/users.txt",std::fstream::in);
     std::string line;
-    while (std::getline(write, line)) {
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::string nume(word);
-        std::getline(iss, word, ';');
-        if (word == email) {
-            user.setNumePrenume(nume);
-            user.setEmail(email);
+    std::regex separator("\\;");
 
-            std::getline(iss, word, ';');
-            user.setParola(word);
-
-            std::getline(iss, word, ';');
-            user.setTelefon(word);
-
-            std::getline(iss, word, ';');
-            user.setIban(word);
-
-            std::getline(iss, word, ';');
-            std::string aux(word);
-
-
-            std::getline(iss, word, ';');
-            user.setCiv(stoi(word));
-
-            std::getline(iss, word, ';');
-            user.setSuma((float) stof(word));
-
+    while (std::getline(login, line)){
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (out[1] == email) {
             std::pair<unsigned short, unsigned short> temp;
-            std::istringstream iss1(aux);
+            std::istringstream iss(out[5]);
             std::string date;
-            std::getline(iss1, date, '/');
+            std::getline(iss, date, '/');
             temp.first = stoi(date);
-            std::getline(iss1, date, '/');
+            std::getline(iss, date, '/');
             temp.second = stoi(date);
-            user.setExpDate(temp);
 
-            std::string numeCompanie, cui;
-            if (std::getline(iss, word, ';')) {
-                numeCompanie = word;
-                std::getline(iss, word, ';');
-                cui = word;
-                UserBusiness ub_var(user, numeCompanie, cui);
-                std::shared_ptr<User> us_ptr = std::make_shared<User>(ub_var);
+            User user(out[0], out[2], out[1], out[3], out[4], temp,
+                      std::vector<std::shared_ptr<Tranzactie>>(),
+                      std::vector<std::shared_ptr<Message>>(),
+                      std::stoi(out[6]), std::stof(out[7]));
+
+            if (out.size() > 8) {
+                UserBusiness ub_var(user, out[8], out[9]);
+                std::shared_ptr<UserBusiness> us_ptr = std::make_shared<UserBusiness>(ub_var);
                 panelUser(us_ptr);
             } else {
                 std::shared_ptr<User> us_ptr = std::make_shared<User>(user);
                 panelUser(us_ptr);
             }
-            write.close();
+            login.close();
             break;
         }
     }
@@ -496,20 +474,21 @@ void Interface::loginUser(const std::string &email) {
 
 void Interface::loginAdmin(const std::string &email,const std::string &password) {
     Admin ad;
-    std::fstream write;
-    write.open("../txt_files/Admin/admins.txt",std::fstream::in);
+    std::fstream login;
+    login.open("../txt_files/Admin/admins.txt",std::fstream::in);
     std::string line;
-    while (std::getline(write, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::string username(word);
-        std::getline(iss, word, ';');
-        if (word == email || username==email){
+    std::regex separator("\\;");
+
+    while (std::getline(login, line)){
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (out[0] == email || out[1]==email){
             ad.setParola(password);
-            ad.setUsername(username);
-            ad.setEmail(word);
-            write.close();
+            ad.setUsername(out[0]);
+            ad.setEmail(out[1]);
+            login.close();
             panelAdmin(ad);
             break;
         }
@@ -520,14 +499,15 @@ bool Interface::checkEmailPasswordLogin(const std::string& email, const std::str
     std::fstream login;
     login.open("../txt_files/User/users.txt",std::fstream::in);
     std::string line;
+    std::regex separator("\\;");
+
     while (std::getline(login, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        std::getline(iss, word, ';');
-        if (email == word){
-            std::getline(iss, word, ';');
-            if (password == word){
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (email == out[1]){
+            if (password == out[2]){
                 tip = 1;
                 return true;
             }
@@ -539,23 +519,12 @@ bool Interface::checkEmailPasswordLogin(const std::string& email, const std::str
 
     login.open("../txt_files/Admin/admins.txt",std::fstream::in);
     while (std::getline(login, line)){
-        std::istringstream iss(line);
-        std::string word;
-        std::getline(iss, word, ';');
-        if (email == word){
-            std::getline(iss, word, ';');
-            std::getline(iss, word, ';');
-            if (password == word){
-                tip = 2;
-                return true;
-            }
-            else
-                return false;
-        }
-        std::getline(iss, word, ';');
-        if (email == word){
-            std::getline(iss, word, ';');
-            if (password == word){
+        std::vector<std::string> out(
+                std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                std::sregex_token_iterator()
+        );
+        if (email == out[0] || email == out[1]){
+            if (password == out[2]){
                 tip = 2;
                 return true;
             }
@@ -583,6 +552,7 @@ void Interface::panelUser(const std::shared_ptr<User>& user) {
             case 3: {
                 float suma_tranzactie = user->makeTransaction();
                 user->updateBalance(user->getSuma() - suma_tranzactie);
+                user->setSuma(user->getSuma() - suma_tranzactie);
                 break;
             }
             case 4: {
@@ -592,7 +562,7 @@ void Interface::panelUser(const std::shared_ptr<User>& user) {
             case 5: {
                 setRed;
                 std::cout<<"\n\tPlease wait...\n";
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 return;
             }
             default: {
@@ -635,7 +605,7 @@ void Interface::panelAdmin(Admin& admin) {
             case 2: {
                 setRed;
                 std::cout<<"\n\tPlease wait...\n";
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 startApp();
                 return;
             }

@@ -49,56 +49,34 @@ void Admin::showAllUsers(unsigned short& val) const {
         std::vector<std::shared_ptr<User>> users;
         std::string line;
         int n = 0;
+        std::regex separator("\\;");
 
         while (std::getline(login, line)){
-            User user_aux;
-            std::cout<<"\t"<<n+1<<" ";
-            std::istringstream iss(line);
-            std::string word;
-            std::getline(iss, word, ';');
-            std::cout<<"\t"<<word<<" ";
-            user_aux.setNumePrenume(word);
-            std::getline(iss, word, ';');
-            std::cout<<"\t"<<word<<"\n";
-            user_aux.setEmail(word);
-            std::getline(iss, word, ';');
+            std::vector<std::string> out(
+                    std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
+                    std::sregex_token_iterator()
+            );
 
-            user_aux.setParola(word);
-            std::getline(iss, word, ';');
-
-            user_aux.setTelefon(word);
-            std::getline(iss, word, ';');
-
-            user_aux.setIban(word);
-            std::getline(iss, word, ';');
-
-            std::string aux(word);
-
-            std::getline(iss, word, ';');
-            user_aux.setCiv(stoi(word));
-
-            std::getline(iss, word, ';');
-            user_aux.setSuma(stof(word));
-
-            std::istringstream iss1(aux);
+            std::pair<unsigned short, unsigned short> temp;
+            std::istringstream iss(out[5]);
             std::string date;
-            std::getline(iss1, date, '/');
-            std::pair<unsigned short , unsigned short> temp;
+            std::getline(iss, date, '/');
             temp.first = stoi(date);
-            std::getline(iss1, date, '/');
+            std::getline(iss, date, '/');
             temp.second = stoi(date);
-            user_aux.setExpDate(temp);
 
-            if (std::getline(iss, word, ';')){
-                std::string companie_aux, cui_aux;
-                companie_aux = word;
-                std::getline(iss, word, ';');
-                cui_aux = word;
-                UserBusiness userBusiness_aux(user_aux,companie_aux,cui_aux);
+            User user(out[0], out[2], out[1], out[3], out[4], temp,
+                      std::vector<std::shared_ptr<Tranzactie>>(),
+                      std::vector<std::shared_ptr<Message>>(),
+                      std::stoi(out[6]), std::stof(out[7]));
+
+            if (out.size() > 8) {
+                UserBusiness userBusiness_aux(user, out[8], out[9]);
                 users.push_back(std::make_shared<UserBusiness>(userBusiness_aux));
-            }
-            else
-                users.push_back(std::make_shared<User>(user_aux));
+            } else
+                users.push_back(std::make_shared<User>(user));
+
+            std::cout << "\t" << n+1 << "\t" << out[0] << "\t"<< out[1] <<"\n";
             n++;
         }
         login.close();
@@ -204,7 +182,7 @@ void Admin::sendMessage(const std::shared_ptr<User>& user) const{
                 std::cout<<"\n\tMessage sent!";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 std::cout<<"\n\tLoading main panel! Please wait...\n";
-                std::this_thread::sleep_for(std::chrono::seconds(2));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
             }
             else{
                 setRed;

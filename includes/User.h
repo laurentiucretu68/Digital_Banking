@@ -49,33 +49,17 @@ public:
 
     const std::string &getNumePrenume() const;
 
-    void setNumePrenume(const std::string &numePrenume);
-
-    void setParola(const std::string &parola_copie);
-
     const std::string &getEmail() const;
-
-    void setEmail(const std::string &email_copie);
 
     const std::string &getTelefon() const;
 
-    void setTelefon(const std::string &telefon_copie);
-
     const std::string &getIban() const;
-
-    void setIban(const std::string &iban);
 
     const std::pair<unsigned short, unsigned short> &getExpDate() const;
 
-    void setExpDate(const std::pair<unsigned short, unsigned short> &expDate);
-
     float getSuma() const;
 
-    void setSuma(float suma_copie);
-
     int getCiv() const;
-
-    void setCiv(int civ);
 
     void changePassword();
 
@@ -95,11 +79,13 @@ public:
 
     bool checkDuplicateIBAN(const std::string &IBAN);
 
-    User returnUser(const std::string &IBAN);
+    std::shared_ptr<User> returnUser(const std::string &IBAN);
 
     static void updateFileFromTemp();
 
     virtual void showInfo(std::ostream &os) const;
+
+    void setSuma(float suma);
 };
 
 

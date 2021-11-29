@@ -17,6 +17,11 @@ class Message {
     data_str_mess data{};
 
 public:
+    Message() = default;
+
+    Message(std::string &destinatar, std::string &mesaj, unsigned short tipMesaj,
+            const data_str_mess &data);
+
     Message& operator=(const Message& copie);
 
     ~Message() = default;
@@ -26,8 +31,6 @@ public:
     const std::string &getMesaj() const;
 
     void setMesaj(const std::string &mesaj_copie);
-
-    const data_str_mess &getData() const;
 
     void setData(const data_str_mess &data_cp);
 
