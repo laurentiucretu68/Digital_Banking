@@ -608,7 +608,10 @@ void User::updateFileFromTemp() {
 }
 
 void User::updateUserInFile(std::ostream &os) {}
+<<<<<<< HEAD
 
 void User::setSuma(float suma_) {
     User::suma = suma_;
 }
+=======
+>>>>>>> 15741c1c4bf922c2ad87e26500caaa57f6c82375
