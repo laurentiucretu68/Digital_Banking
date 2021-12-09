@@ -21,8 +21,6 @@ protected:
     int CIV{};
     float suma{};
 
-    virtual void updateUserInFile(std::ostream& os);
-
 public:
 
     User()= default;
@@ -83,7 +81,9 @@ public:
 
     static void updateFileFromTemp();
 
-    virtual void showInfo(std::ostream &os) const;
+    virtual void showInfo(std::ostream&) const{}
+
+    virtual void updateUserInFile(std::ostream&){}
 
     void setSuma(float suma);
 };

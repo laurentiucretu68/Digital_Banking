@@ -46,8 +46,6 @@ User &User::operator=(const User &copie) {
     return *this;
 }
 
-void User::showInfo(std::ostream &os) const{}
-
 std::ostream &operator<<(std::ostream &os, const std::shared_ptr<User>& user) {
     setLightMagenta;
     os<<"\n\t Info about "<<user->nume_prenume<<"\n\n";
@@ -607,11 +605,6 @@ void User::updateFileFromTemp() {
     remove("../txt_files/User/temporary.txt");
 }
 
-void User::updateUserInFile(std::ostream &os) {}
-<<<<<<< HEAD
-
 void User::setSuma(float suma_) {
     User::suma = suma_;
 }
-=======
->>>>>>> 15741c1c4bf922c2ad87e26500caaa57f6c82375

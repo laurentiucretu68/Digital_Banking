@@ -50,6 +50,7 @@ void Admin::showAllUsers(unsigned short& val) const {
         std::string line;
         int n = 0;
         std::regex separator("\\;");
+        std::vector<std::string> users_name, users_email;
 
         while (std::getline(login, line)){
             std::vector<std::string> out(
@@ -77,6 +78,8 @@ void Admin::showAllUsers(unsigned short& val) const {
                 users.push_back(std::make_shared<User>(user));
 
             std::cout << "\t" << n+1 << "\t" << out[0] << "\t"<< out[1] <<"\n";
+            users_name.push_back(out[0]);
+            users_email.push_back(out[1]);
             n++;
         }
         login.close();
@@ -97,18 +100,26 @@ void Admin::showAllUsers(unsigned short& val) const {
                 return;
             }
             else
-            if (option>=1 && option<=n){
-                Admin::showUser(users[option - 1]);
-                val = 1;
-                return;
-            }
-            else{
-                setRed;
-                std::cout<<"\n\tIncorrect option!\n";
-                val = 1;
-                setBlue;
-                std::cout<<"\n\tPlease select your choice: ";
-            }
+                if (option>=1 && option<=n){
+                    Admin::showUser(users[option - 1]);
+                    val = 1;
+
+                    setGreen;
+                    for (int i=0; i<n; i++)
+                        std::cout << "\t" << i+1 << "\t" << users_name[i] << "\t"<< users_email[i] <<"\n";
+
+                    setBlue;
+                    std::cout<<"\n\n\tFor a user info type the id"<<'\n';
+                    std::cout<<"\tFor back, type 0\n\n";
+                    std::cout<<"\tPlease select your choice: ";
+                }
+                else{
+                    setRed;
+                    std::cout<<"\n\tIncorrect option!\n";
+                    val = 1;
+                    setBlue;
+                    std::cout<<"\n\tPlease select your choice: ";
+                }
         }
     }
     catch (std::exception& e) {
@@ -131,8 +142,6 @@ void Admin::showUser(const std::shared_ptr<User>& user) const{
             setRed;
             std::cout<<"\n\tWait...\n\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            unsigned short val = 1;
-            Admin::showAllUsers(val);
             return;
         }
         else
@@ -141,7 +150,12 @@ void Admin::showUser(const std::shared_ptr<User>& user) const{
                 std::cout<<"\n\tWait...\n\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 Admin::sendMessage(user);
-                return;
+
+                std::cout<<user;
+                setBlue;
+                std::cout<<"\t[1] Go back to all users panel \n";
+                std::cout<<"\t[2] Send a message to this user\n\n";
+                std::cout<<"\tPlease select your choice: ";
             }
             else{
                 setRed;
@@ -167,36 +181,35 @@ void Admin::sendMessage(const std::shared_ptr<User>& user) const{
             setRed;
             std::cout<<"\n\tWait...\n\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            Admin::showUser(user);
-            return;
+            break;
         }
         else
-        if (option==2){
-            setRed;
-            std::cout<<"\n\tWait...\n\n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            unsigned short success = 0;
-            processingMessage(user,success);
-            if (success == 1){
+            if (option==2){
                 setRed;
-                std::cout<<"\n\tMessage sent!";
+                std::cout<<"\n\tWait...\n\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout<<"\n\tLoading main panel! Please wait...\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                unsigned short success = 0;
+                processingMessage(user,success);
+                if (success == 1){
+                    setRed;
+                    std::cout<<"\n\tMessage sent!";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::cout<<"\n\tLoading main panel! Please wait...\n";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                }
+                else{
+                    setRed;
+                    std::cout<<"\n\tError..\n";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                }
+                break;
             }
             else{
                 setRed;
-                std::cout<<"\n\tError..\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::cout<<"\n\tIncorrect option!\n";
+                setBlue;
+                std::cout<<"\n\tPlease select your choice: ";
             }
-            return;
-        }
-        else{
-            setRed;
-            std::cout<<"\n\tIncorrect option!\n";
-            setBlue;
-            std::cout<<"\n\tPlease select your choice: ";
-        }
     }
 }
 

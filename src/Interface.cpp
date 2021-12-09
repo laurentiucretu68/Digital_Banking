@@ -45,7 +45,7 @@ void Interface::startApp() {
                 setRed;
                 std::cout<<"\n\tClosing the app...\n\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                exit(0);
+                return;
             }
             default:{
                 setRed;
@@ -490,7 +490,7 @@ void Interface::loginAdmin(const std::string &email,const std::string &password)
             ad.setEmail(out[1]);
             login.close();
             panelAdmin(ad);
-            break;
+            return;
         }
     }
 }
@@ -578,35 +578,19 @@ void Interface::panelUser(const std::shared_ptr<User>& user) {
 }
 
 void Interface::panelAdmin(Admin& admin) {
-    setLightMagenta;
-    std::cout<<"\t---------------------------------";
-    std::cout<<"\n\t| **** Digital Banking App **** |\n";
-    std::cout<<"\t---------------------------------\n\n";
-    std::cout<<"\tWelcome back "<<admin.getUsername()<<"!\n\n";
-    setGreen;
-    std::cout<<"\t[1] Show all users"<<'\n';
-    std::cout<<"\t[2] Logout\n\n";
-
-    setBlue;
-    std::cout<<"\tPlease select your choice: ";
-
+    Interface::showMenuPanelAdmin(admin);
     unsigned short option;
-    setGreen;
-
     while (std::cin>>option){
         switch(option) {
             case 1: {
                 unsigned short val = 0;
                 admin.showAllUsers(val);
-                if (val == 1)
-                    panelAdmin(admin);
-                return;
+                break;
             }
             case 2: {
                 setRed;
                 std::cout<<"\n\tPlease wait...\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                startApp();
                 return;
             }
             default: {
@@ -614,8 +598,10 @@ void Interface::panelAdmin(Admin& admin) {
                 std::cout<<"\n\tIncorrect option!\n";
                 setBlue;
                 std::cout<<"\n\tPlease select your choice: ";
+                break;
             }
         }
+        Interface::showMenuPanelAdmin(admin);
     }
 }
 
@@ -647,3 +633,20 @@ void Interface::showMenuPanelUser(const std::shared_ptr<User> &user) {
     setGreen;
     setWhite;
 }
+
+void Interface::showMenuPanelAdmin(const Admin& admin) {
+    setLightMagenta;
+    std::cout<<"\t---------------------------------";
+    std::cout<<"\n\t| **** Digital Banking App **** |\n";
+    std::cout<<"\t---------------------------------\n\n";
+    std::cout<<"\tWelcome back "<<admin.getUsername()<<"!\n\n";
+    setGreen;
+    std::cout<<"\t[1] Show all users"<<'\n';
+    std::cout<<"\t[2] Logout\n\n";
+
+    setBlue;
+    std::cout<<"\tPlease select your choice: ";
+    setGreen;
+}
+
+

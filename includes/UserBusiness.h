@@ -14,9 +14,9 @@ public:
 
     void writeUserInFile() override;
 
-    void showInfo(std::ostream &os) const override;
+    void showInfo(std::ostream&) const override;
 
-    void updateUserInFile(std::ostream& os) override;
+    void updateUserInFile(std::ostream&) override;
 
 };
 

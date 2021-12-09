@@ -3,6 +3,7 @@
 #include <fstream>
 #include <random>
 #include <regex>
+#include <utility>
 
 Tranzactie &Tranzactie::operator=(const Tranzactie &copie) {
     destinatar = copie.destinatar;
@@ -47,5 +48,5 @@ void Tranzactie::writeInFile(std::fstream &file) {
 
 Tranzactie::Tranzactie(std::string &destinatar, std::string &ibanDestinatar, std::string type,
                        float sumaTrimisa, const data_str &data) : destinatar(destinatar),
-                                                                  IBAN_destinatar(ibanDestinatar), type(type),
+                                                                  IBAN_destinatar(ibanDestinatar), type(std::move(type)),
                                                                   suma_trimisa(sumaTrimisa), data(data) {}
