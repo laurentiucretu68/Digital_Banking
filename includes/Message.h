@@ -19,7 +19,7 @@ class Message {
 public:
     Message() = default;
 
-    Message(std::string &destinatar, std::string &mesaj, unsigned short tipMesaj,
+    Message(std::string destinatar, std::string mesaj, unsigned short tipMesaj,
             const data_str_mess &data);
 
     Message& operator=(const Message& copie);
@@ -39,4 +39,19 @@ public:
     void writeInFile(std::fstream &file);
 
     friend std::ostream &operator<<(std::ostream &os, const Message &messages);
+};
+
+class MessageFactory{
+public:
+    static Message warning(const std::string& destinatar_, const std::string& mesaj_, const data_str_mess& data_){
+        return Message(destinatar_, mesaj_, 1, data_);
+    }
+
+    static Message advice(const std::string& destinatar_, const std::string& mesaj_, const data_str_mess& data_){
+        return Message(destinatar_, mesaj_, 2, data_);
+    }
+
+    static Message notification(const std::string& destinatar_, const std::string& mesaj_, const data_str_mess& data_){
+        return Message(destinatar_, mesaj_, 3, data_);
+    }
 };

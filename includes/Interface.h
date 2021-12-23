@@ -10,6 +10,10 @@
 #include "Admin.h"
 
 class Interface{
+    Interface() = default;
+    ~Interface() = default;
+    static Interface* interf;
+
     /// metodele de Signup
     void signup();
     void signupProcess();
@@ -39,4 +43,8 @@ class Interface{
 public:
     /// metoda de Startup
     void startApp();
+
+    Interface(const Interface&) = delete;
+    Interface& operator=(const Interface&) = delete;
+    static Interface* getInstance();
 };

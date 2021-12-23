@@ -1,7 +1,7 @@
 #include "includes/Interface.h"
 
 int main() {
-    Interface i;
-    i.startApp();
+    auto i = Interface::getInstance();
+    i->startApp();
     return 0;
 }

@@ -225,8 +225,11 @@ std::vector<std::shared_ptr<Tranzactie>> User::loadTransactionsHistory() const{
             data_cp.an = (unsigned short)stoi(out[4]);
             data_cp.ora = (unsigned short)stoi(out[5]);
 
-            Tranzactie tranzactie_curenta(out[0], out[1], out[out.size() - 1],
-                                          stof(out[2]), data_cp);
+            TranzactieBuilder tran_builder;
+            Tranzactie tranzactie_curenta = tran_builder.destinatar(out[0]).IBAN(
+                            out[1]).type(out[out.size() - 1]).suma(
+                            stof(out[2])).data(data_cp).build();
+
             transactions.emplace_back(std::make_shared<Tranzactie>(tranzactie_curenta));
         }
         file.close();
@@ -319,7 +322,10 @@ float User::makeTansactionCase1() {
                 data_cp.an = an;
                 data_cp.ora = ora;
 
-                Tranzactie tran(nume_prenume, IBAN, "recived", suma_, data_cp);
+                TranzactieBuilder tran_builder;
+                Tranzactie tran = tran_builder.destinatar(nume_prenume).IBAN(
+                        IBAN).type("recived").suma(suma_).data(data_cp).build();
+
                 std::string file_name = "../txt_files/User/" + user_aux->email + "_transactions.txt";
                 std::fstream file;
                 file.open(file_name,std::fstream::app);
@@ -354,7 +360,10 @@ float User::makeTansactionCase1() {
     data_cp.an = an;
     data_cp.ora = ora;
 
-    Tranzactie tran(destinatar, IBAN_dest, "sent", suma_, data_cp);
+    TranzactieBuilder tran_builder;
+    Tranzactie tran = tran_builder.destinatar(destinatar).IBAN(
+            IBAN_dest).type("sent").suma(suma_).data(data_cp).build();
+
     std::string file_name = "../txt_files/User/" + email + "_transactions.txt";
     std::fstream file;
     file.open(file_name,std::fstream::app);
@@ -585,8 +594,15 @@ std::vector<std::shared_ptr<Message>> User::loadMessages() const{
             data_cp.an = (unsigned short)stoi(out[5]);
             data_cp.ora = (unsigned short)stoi(out[6]);
 
-            Message mesaj_auxiliar(out[0], out[2],
-                                   (unsigned short)std::stoi(out[1]), data_cp);
+            auto type_ = (unsigned short)std::stoi(out[1]);
+            Message mesaj_auxiliar;
+            if (type_==1)
+                mesaj_auxiliar = MessageFactory::warning(out[0], out[2], data_cp);
+            if (type_==2)
+                mesaj_auxiliar = MessageFactory::advice(out[0], out[2], data_cp);
+            if (type_==3)
+                mesaj_auxiliar = MessageFactory::notification(out[0], out[2], data_cp);
+
             mesaje.emplace_back(std::make_shared<Message>(mesaj_auxiliar));
         }
         file.close();

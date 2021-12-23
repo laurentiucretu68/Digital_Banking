@@ -35,11 +35,9 @@ public:
          std::string telefon, std::string iban, std::pair<unsigned short, unsigned short> expDate,
          std::vector<std::shared_ptr<Tranzactie>> transaction_history, std::vector<std::shared_ptr<Message>> messages,
          int civ, float suma) : nume_prenume(std::move(numePrenume)), parola(std::move(parola)),
-                                                                       email(std::move(email)), telefon(std::move(telefon)), IBAN(std::move(iban)),
-                                                                       exp_date(std::move(expDate)),
-                                                                       transaction_history(std::move(transaction_history)),
-                                                                       messages(std::move(messages)),
-                                                                       CIV(civ), suma(suma) {}
+         email(std::move(email)), telefon(std::move(telefon)), IBAN(std::move(iban)),
+         exp_date(std::move(expDate)), transaction_history(std::move(transaction_history)),
+         messages(std::move(messages)), CIV(civ), suma(suma) {}
 
     friend std::ostream &operator<<(std::ostream &os, const std::shared_ptr<User>& user);
 

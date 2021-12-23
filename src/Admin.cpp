@@ -250,12 +250,13 @@ void Admin::processingMessage(const std::shared_ptr<User>& user, unsigned short&
     data_cp.an = an;
     data_cp.ora = ora;
 
-
     Message message;
-    message.setDestinatar(user->getEmail());
-    message.setMesaj(mesaj);
-    message.setTipMesaj(type);
-    message.setData(data_cp);
+    if (type==1)
+        message = MessageFactory::warning(user->getEmail(), mesaj, data_cp);
+    if (type==2)
+        message = MessageFactory::advice(user->getEmail(), mesaj, data_cp);
+    if (type==3)
+        message = MessageFactory::notification(user->getEmail(), mesaj, data_cp);
 
     try{
         std::string file_name = "../txt_files/User/" + user->getEmail() + "_messages.txt";

@@ -16,6 +16,7 @@ class Tranzactie{
     std::string type{};
     float suma_trimisa{};
     data_str data{};
+    friend class TranzactieBuilder;
 
 public:
     Tranzactie() = default;
@@ -32,4 +33,40 @@ public:
     static bool checkPatternIBAN(const std::string &IBAN);
 
     void writeInFile(std::fstream &file);
+};
+
+class TranzactieBuilder{
+    Tranzactie tran;
+
+public:
+    TranzactieBuilder() = default;
+
+    TranzactieBuilder& destinatar(const std::string& destinatar_){
+        tran.destinatar = destinatar_;
+        return  *this;
+    }
+
+    TranzactieBuilder& IBAN(const std::string& IBAN_){
+        tran.IBAN_destinatar = IBAN_;
+        return *this;
+    }
+
+    TranzactieBuilder& type(const std::string& type_){
+        tran.type = type_;
+        return *this;
+    }
+
+    TranzactieBuilder& suma(float suma_){
+        tran.suma_trimisa = suma_;
+        return *this;
+    }
+
+    TranzactieBuilder& data(data_str& data_){
+        tran.data = data_;
+        return *this;
+    }
+
+    Tranzactie build(){
+        return tran;
+    }
 };

@@ -2,7 +2,7 @@ objects = main.cpp src/*.cpp
 all: build run memcheck remove
 
 build: $(objects)
-	g++ -g -O0 -Wall -Wextra -pedantic -Weffc++ -Werror $(objects) -o src/main
+	g++ -g -O0 -Wall -Wextra -pedantic -Weffc++ $(objects) -o src/main
 
 run: src/main
 	cd src/ && ./main

@@ -1,5 +1,6 @@
-#include "../includes/Message.h"
 #include <iostream>
+#include <utility>
+#include "../includes/Message.h"
 #include "../libraries/rlutil.h"
 
 #define setCyan rlutil::setColor(3)
@@ -55,5 +56,5 @@ void Message::setData(const data_str_mess &data_cp) {
     Message::data = data_cp;
 }
 
-Message::Message(std::string &destinatar, std::string &mesaj, unsigned short tipMesaj,
-                 const data_str_mess &data) : destinatar(destinatar), mesaj(mesaj), tip_mesaj(tipMesaj), data(data) {}
+Message::Message(std::string destinatar, std::string mesaj, unsigned short tipMesaj,
+                 const data_str_mess &data): destinatar(std::move(destinatar)), mesaj(std::move(mesaj)), tip_mesaj(tipMesaj), data(data) {}

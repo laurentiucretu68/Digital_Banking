@@ -649,4 +649,13 @@ void Interface::showMenuPanelAdmin(const Admin& admin) {
     setGreen;
 }
 
+Interface* Interface::interf = nullptr;
+
+Interface *Interface::getInstance() {
+    if(interf == nullptr)
+        interf = new Interface();
+
+    return interf;
+}
+
 
