@@ -1,5 +1,4 @@
 #include "../includes/Admin.h"
-#include "Admin.cpp"
 #include "../includes/Interface.h"
 #include "../libraries/digestpp.hpp"
 #include <iostream>
@@ -10,6 +9,8 @@
 #include <regex>
 #include <sstream>
 #include "../libraries/rlutil.h"
+#include "Admin.cpp"
+
 
 #define setBlue rlutil::setColor(1)
 #define setGreen rlutil::setColor(2)
