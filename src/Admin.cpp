@@ -14,31 +14,20 @@
 #define setRed rlutil::setColor(4)
 #define setLightMagenta rlutil::setColor(13)
 
-
-Admin &Admin::operator=(const Admin &copie) {
-    username = copie.username;
-    email = copie.email;
-    parola = copie.parola;
-    return *this;
+template<typename T>
+Admin<T>::Admin(const T& username_, const T& email_, const T& parola_) {
+    this->username = username_;
+    this->email = email_;
+    this->parola = parola_;
 }
 
-const std::string &Admin::getUsername() const {
+template <typename T>
+const T &Admin<T>::getUsername() const {
     return username;
 }
 
-void Admin::setUsername(const std::string &username_copie) {
-    Admin::username = username_copie;
-}
-
-void Admin::setEmail(const std::string &email_copie) {
-    Admin::email = email_copie;
-}
-
-void Admin::setParola(const std::string &parola_copie) {
-    Admin::parola = parola_copie;
-}
-
-void Admin::showAllUsers(unsigned short& val) const {
+template <typename T>
+void Admin<T>::showAllUsers() const {
     try{
         setLightMagenta;
         std::cout<<"\n\tAdmin panel -- all users\n\n";
@@ -96,13 +85,11 @@ void Admin::showAllUsers(unsigned short& val) const {
                 setRed;
                 std::cout<<"\n\tWait...\n\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                val = 1;
                 return;
             }
             else
                 if (option>=1 && option<=n){
-                    Admin::showUser(users[option - 1]);
-                    val = 1;
+                    Admin<T>::showUser(users[option - 1]);
 
                     setGreen;
                     for (int i=0; i<n; i++)
@@ -116,7 +103,6 @@ void Admin::showAllUsers(unsigned short& val) const {
                 else{
                     setRed;
                     std::cout<<"\n\tIncorrect option!\n";
-                    val = 1;
                     setBlue;
                     std::cout<<"\n\tPlease select your choice: ";
                 }
@@ -128,7 +114,8 @@ void Admin::showAllUsers(unsigned short& val) const {
     }
 }
 
-void Admin::showUser(const std::shared_ptr<User>& user) const{
+template <typename T>
+void Admin<T>::showUser(const std::shared_ptr<User>& user) const{
     std::cout<<user;
     setBlue;
     std::cout<<"\t[1] Go back to all users panel \n";
@@ -149,7 +136,7 @@ void Admin::showUser(const std::shared_ptr<User>& user) const{
                 setRed;
                 std::cout<<"\n\tWait...\n\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
-                Admin::sendMessage(user);
+                Admin<T>::sendMessage(user);
 
                 std::cout<<user;
                 setBlue;
@@ -166,7 +153,8 @@ void Admin::showUser(const std::shared_ptr<User>& user) const{
     }
 }
 
-void Admin::sendMessage(const std::shared_ptr<User>& user) const{
+template <typename T>
+void Admin<T>::sendMessage(const std::shared_ptr<User>& user) const{
     setLightMagenta;
     std::cout<<"\t Send message to: "<<user->getNumePrenume()<<"\n\n";
     setBlue;
@@ -213,7 +201,8 @@ void Admin::sendMessage(const std::shared_ptr<User>& user) const{
     }
 }
 
-void Admin::processingMessage(const std::shared_ptr<User>& user, unsigned short& success) {
+template <typename T>
+void Admin<T>::processingMessage(const std::shared_ptr<User>& user, unsigned short& success) {
     std::string mesaj;
     setBlue;
     std::cout<<"\tSelect type of message:\n";
@@ -279,3 +268,4 @@ void Admin::processingMessage(const std::shared_ptr<User>& user, unsigned short&
         std::cout << "\n\t(Error) " << e.what() << "\n";
     }
 }
+

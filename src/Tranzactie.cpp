@@ -5,15 +5,6 @@
 #include <regex>
 #include <utility>
 
-Tranzactie &Tranzactie::operator=(const Tranzactie &copie) {
-    destinatar = copie.destinatar;
-    IBAN_destinatar = copie.IBAN_destinatar;
-    type = copie.type;
-    suma_trimisa = copie.suma_trimisa;
-    data = copie.data;
-    return *this;
-}
-
 std::ostream &operator<<(std::ostream &os, const Tranzactie &tranzactie) {
     if (tranzactie.type == "sent")
         os <<"\n\t\tDestinatar: ";

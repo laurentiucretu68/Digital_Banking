@@ -9,26 +9,23 @@
 #include "User.h"
 #include "UserBusiness.h"
 
+template <typename T>
 class Admin{
-    std::string username{};
-    std::string email{};
-    std::string parola{};
-    static void processingMessage(const std::shared_ptr<User>&, unsigned short&) ;
+    T username;
+    T email;
+    T parola;
+    static void processingMessage(const std::shared_ptr<User>&, unsigned short&);
 
 public:
     Admin()= default;
 
-    Admin& operator=(const Admin& copie);
+    Admin(const T& username_, const T& email_, const T& parola_);
 
-    const std::string &getUsername() const;
+    Admin& operator=(const Admin&) = default;
 
-    void setUsername(const std::string &username_copie);
+    const T& getUsername() const;
 
-    void setEmail(const std::string &email_copie);
-
-    void setParola(const std::string &parola_copie);
-
-    void showAllUsers(unsigned short&) const;
+    void showAllUsers() const;
 
     void showUser(const std::shared_ptr<User>& user) const;
 

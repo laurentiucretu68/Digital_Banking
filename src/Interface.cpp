@@ -1,4 +1,5 @@
 #include "../includes/Admin.h"
+#include "Admin.cpp"
 #include "../includes/Interface.h"
 #include "../libraries/digestpp.hpp"
 #include "../libraries/rlutil.h"
@@ -401,8 +402,9 @@ void Interface::login() {
                     setCyan;
                     std::cout<<"\n\tLogin Succesful!\n\n";
                     std::this_thread::sleep_for(std::chrono::seconds(1));
-                    if (tip==2)
+                    if (tip==2){
                         loginAdmin(email,password);
+                    }
                     else
                         loginUser(email);
                 }
@@ -472,8 +474,7 @@ void Interface::loginUser(const std::string &email) {
     }
 }
 
-void Interface::loginAdmin(const std::string &email,const std::string &password) {
-    Admin ad;
+void Interface::loginAdmin(const std::string &email, const std::string &password) {
     std::fstream login;
     login.open("../txt_files/Admin/admins.txt",std::fstream::in);
     std::string line;
@@ -485,9 +486,7 @@ void Interface::loginAdmin(const std::string &email,const std::string &password)
                 std::sregex_token_iterator()
         );
         if (out[0] == email || out[1]==email){
-            ad.setParola(password);
-            ad.setUsername(out[0]);
-            ad.setEmail(out[1]);
+            Admin<std::string> ad(out[0], out[1], password);
             login.close();
             panelAdmin(ad);
             return;
@@ -577,14 +576,14 @@ void Interface::panelUser(const std::shared_ptr<User>& user) {
     }
 }
 
-void Interface::panelAdmin(Admin& admin) {
+template <typename T>
+void Interface::panelAdmin(Admin<T>& admin) {
     Interface::showMenuPanelAdmin(admin);
     unsigned short option;
     while (std::cin>>option){
         switch(option) {
             case 1: {
-                unsigned short val = 0;
-                admin.showAllUsers(val);
+                admin.showAllUsers();
                 break;
             }
             case 2: {
@@ -634,7 +633,8 @@ void Interface::showMenuPanelUser(const std::shared_ptr<User> &user) {
     setWhite;
 }
 
-void Interface::showMenuPanelAdmin(const Admin& admin) {
+template <typename T>
+void Interface::showMenuPanelAdmin(const Admin<T>& admin) {
     setLightMagenta;
     std::cout<<"\t---------------------------------";
     std::cout<<"\n\t| **** Digital Banking App **** |\n";

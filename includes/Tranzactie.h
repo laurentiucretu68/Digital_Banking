@@ -24,7 +24,7 @@ public:
     Tranzactie(std::string &destinatar, std::string &ibanDestinatar, std::string type,
                float sumaTrimisa, const data_str &data);
 
-    Tranzactie& operator=(const Tranzactie& copie);
+    Tranzactie& operator=(const Tranzactie&) = default;
 
     ~Tranzactie()= default;
 

@@ -34,8 +34,10 @@ class Interface{
     static bool checkEmailPasswordLogin(const std::string&, const std::string&, unsigned short&);
 
     /// metodele panel
-    static void panelAdmin(Admin&);
-    static void showMenuPanelAdmin(const Admin&);
+    template <typename T>
+    static void panelAdmin(Admin<T>&);
+    template <typename T>
+    static void showMenuPanelAdmin(const Admin<T>&);
 
     static void panelUser(const std::shared_ptr<User>&);
     static void showMenuPanelUser(const std::shared_ptr<User>& user);
