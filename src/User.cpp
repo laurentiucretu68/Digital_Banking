@@ -1,7 +1,6 @@
 #include "../includes/User.h"
 #include "../includes/UserBusiness.h"
 #include "../libraries/digestpp.hpp"
-#include "../libraries/rlutil.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -12,6 +11,7 @@
 #include <ctime>
 #include <regex>
 #include <sstream>
+#include "../libraries/rlutil.h"
 
 #define setBlue rlutil::setColor(1)
 #define setGreen rlutil::setColor(2)

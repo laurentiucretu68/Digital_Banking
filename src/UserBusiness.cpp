@@ -1,5 +1,4 @@
 #include "../includes/UserBusiness.h"
-#include "../libraries/rlutil.h"
 #include <utility>
 #include <iostream>
 #include <fstream>
@@ -7,6 +6,7 @@
 #include <regex>
 #include <string>
 #include <sstream>
+#include "../libraries/rlutil.h"
 
 #define setRed rlutil::setColor(4)
 
