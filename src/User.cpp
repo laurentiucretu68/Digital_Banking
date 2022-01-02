@@ -13,13 +13,6 @@
 #include <sstream>
 #include "../libraries/rlutil.h"
 
-#define setBlue rlutil::setColor(1)
-#define setGreen rlutil::setColor(2)
-#define setRed rlutil::setColor(4)
-#define setMagenta rlutil::setColor(5)
-#define setLightMagenta rlutil::setColor(13)
-#define setWhite rlutil::setColor(15)
-
 
 User::User(const User &copie) {
     nume_prenume = copie.nume_prenume;
@@ -324,7 +317,7 @@ float User::makeTansactionCase1() {
 
                 TranzactieBuilder tran_builder;
                 Tranzactie tran = tran_builder.destinatar(nume_prenume).IBAN(
-                        IBAN).type("recived").suma(suma_).data(data_cp).build();
+                        IBAN).type("received").suma(suma_).data(data_cp).build();
 
                 std::string file_name = "../txt_files/User/" + user_aux->email + "_transactions.txt";
                 std::fstream file;
@@ -588,20 +581,15 @@ std::vector<std::shared_ptr<Message>> User::loadMessages() const{
                     std::sregex_token_iterator(line.begin(), line.end(), separator, -1),
                     std::sregex_token_iterator()
             );
-            data_str_mess data_cp{};
-            data_cp.zi = (unsigned short)stoi(out[3]);
-            data_cp.luna = (unsigned short)stoi(out[4]);
-            data_cp.an = (unsigned short)stoi(out[5]);
-            data_cp.ora = (unsigned short)stoi(out[6]);
 
             auto type_ = (unsigned short)std::stoi(out[1]);
             Message mesaj_auxiliar;
             if (type_==1)
-                mesaj_auxiliar = MessageFactory::warning(out[0], out[2], data_cp);
+                mesaj_auxiliar = MessageFactory::warning(out[0], out[2]);
             if (type_==2)
-                mesaj_auxiliar = MessageFactory::advice(out[0], out[2], data_cp);
+                mesaj_auxiliar = MessageFactory::advice(out[0], out[2]);
             if (type_==3)
-                mesaj_auxiliar = MessageFactory::notification(out[0], out[2], data_cp);
+                mesaj_auxiliar = MessageFactory::notification(out[0], out[2]);
 
             mesaje.emplace_back(std::make_shared<Message>(mesaj_auxiliar));
         }

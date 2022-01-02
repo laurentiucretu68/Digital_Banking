@@ -8,6 +8,7 @@
 #include <ctime>
 #include <regex>
 #include "Admin.h"
+#include "../src/Admin.cpp"
 
 class Interface{
     Interface() = default;

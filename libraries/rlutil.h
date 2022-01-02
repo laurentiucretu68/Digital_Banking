@@ -1,4 +1,15 @@
 #pragma once
+
+#define setBlue rlutil::setColor(1)
+#define setGreen rlutil::setColor(2)
+#define setCyan rlutil::setColor(3)
+#define setRed rlutil::setColor(4)
+#define setMagenta rlutil::setColor(5)
+#define setBrown rlutil::setColor(6)
+#define setLightMagenta rlutil::setColor(13)
+#define setWhite rlutil::setColor(15)
+
+
 /**
  * File: rlutil.h
  *

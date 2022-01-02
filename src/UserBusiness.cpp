@@ -8,7 +8,6 @@
 #include <sstream>
 #include "../libraries/rlutil.h"
 
-#define setRed rlutil::setColor(4)
 
 void UserBusiness::writeUserInFile() {
     try{

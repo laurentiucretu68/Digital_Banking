@@ -9,10 +9,6 @@
 #include <sstream>
 #include "../libraries/rlutil.h"
 
-#define setBlue rlutil::setColor(1)
-#define setGreen rlutil::setColor(2)
-#define setRed rlutil::setColor(4)
-#define setLightMagenta rlutil::setColor(13)
 
 template<typename T>
 Admin<T>::Admin(const T& username_, const T& email_, const T& parola_) {
@@ -226,26 +222,15 @@ void Admin<T>::processingMessage(const std::shared_ptr<User>& user, unsigned sho
     std::cin.get();
     std::cout<<"\n\tMessage: "; std::getline(std::cin,mesaj);
 
-    unsigned short zi, luna, an, ora;
-    time_t theTime = time(nullptr);
-    struct tm *aTime = localtime(&theTime);
-    zi = aTime->tm_mday;
-    luna = aTime->tm_mon + 1;
-    an = aTime->tm_year + 1900;
-    ora = aTime->tm_hour;
-    data_str_mess data_cp{};
-    data_cp.zi = zi;
-    data_cp.luna = luna;
-    data_cp.an = an;
-    data_cp.ora = ora;
+
 
     Message message;
     if (type==1)
-        message = MessageFactory::warning(user->getEmail(), mesaj, data_cp);
+        message = MessageFactory::warning(user->getEmail(), mesaj);
     if (type==2)
-        message = MessageFactory::advice(user->getEmail(), mesaj, data_cp);
+        message = MessageFactory::advice(user->getEmail(), mesaj);
     if (type==3)
-        message = MessageFactory::notification(user->getEmail(), mesaj, data_cp);
+        message = MessageFactory::notification(user->getEmail(), mesaj);
 
     try{
         std::string file_name = "../txt_files/User/" + user->getEmail() + "_messages.txt";

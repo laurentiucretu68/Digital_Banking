@@ -19,6 +19,10 @@ class Admin{
 public:
     Admin()= default;
 
+    ~Admin() = default;
+
+    Admin(const Admin&) = default;
+
     Admin(const T& username_, const T& email_, const T& parola_);
 
     Admin& operator=(const Admin&) = default;

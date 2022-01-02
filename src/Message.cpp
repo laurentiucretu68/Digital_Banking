@@ -3,20 +3,9 @@
 #include "../includes/Message.h"
 #include "../libraries/rlutil.h"
 
-#define setCyan rlutil::setColor(3)
-#define setBrown rlutil::setColor(6)
-
-
-void Message::setDestinatar(const std::string &destinatar_copie) {
-    Message::destinatar = destinatar_copie;
-}
 
 const std::string &Message::getMesaj() const {
     return mesaj;
-}
-
-void Message::setMesaj(const std::string &mesaj_copie) {
-    Message::mesaj = mesaj_copie;
 }
 
 Message &Message::operator=(const Message &copie) {
@@ -25,10 +14,6 @@ Message &Message::operator=(const Message &copie) {
     tip_mesaj = copie.tip_mesaj;
     data = copie.data;
     return *this;
-}
-
-void Message::setTipMesaj(unsigned short tipMesaj_copie) {
-    tip_mesaj = tipMesaj_copie;
 }
 
 void Message::writeInFile(std::fstream &file) {
@@ -52,9 +37,26 @@ std::ostream &operator<<(std::ostream &os, const Message &messages) {
     return os;
 }
 
-void Message::setData(const data_str_mess &data_cp) {
-    Message::data = data_cp;
+Message::Message(std::string destinatar, std::string mesaj, unsigned short tipMesaj)
+        : destinatar(std::move(destinatar)), mesaj(std::move(mesaj)), tip_mesaj(tipMesaj){
+    data = getDate();
 }
 
-Message::Message(std::string destinatar, std::string mesaj, unsigned short tipMesaj,
-                 const data_str_mess &data): destinatar(std::move(destinatar)), mesaj(std::move(mesaj)), tip_mesaj(tipMesaj), data(data) {}
+
+data_str_mess Message::getDate() {
+    unsigned short zi, luna, an, ora;
+    time_t theTime = time(nullptr);
+    struct tm *aTime = localtime(&theTime);
+    zi = aTime->tm_mday;
+    luna = aTime->tm_mon + 1;
+    an = aTime->tm_year + 1900;
+    ora = aTime->tm_hour;
+
+    data_str_mess data_cp{};
+    data_cp.zi = zi;
+    data_cp.luna = luna;
+    data_cp.an = an;
+    data_cp.ora = ora;
+
+    return data_cp;
+}

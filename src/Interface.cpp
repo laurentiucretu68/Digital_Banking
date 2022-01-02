@@ -9,15 +9,6 @@
 #include <regex>
 #include <sstream>
 #include "../libraries/rlutil.h"
-#include "Admin.cpp"
-
-
-#define setBlue rlutil::setColor(1)
-#define setGreen rlutil::setColor(2)
-#define setCyan rlutil::setColor(3)
-#define setRed rlutil::setColor(4)
-#define setLightMagenta rlutil::setColor(13)
-#define setWhite rlutil::setColor(15)
 
 
 void Interface::startApp() {
