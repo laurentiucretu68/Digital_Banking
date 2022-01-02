@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <chrono>
+#include <ctime>
 
 struct data_str_mess{
     unsigned short zi;
