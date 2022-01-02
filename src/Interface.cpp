@@ -1,5 +1,3 @@
-#include "../includes/Admin.h"
-#include "../includes/Interface.h"
 #include "../libraries/digestpp.hpp"
 #include <iostream>
 #include <string>
@@ -9,6 +7,8 @@
 #include <regex>
 #include <sstream>
 #include "../libraries/rlutil.h"
+#include "../includes/Admin.h"
+#include "../includes/Interface.h"
 
 
 void Interface::startApp() {
