@@ -650,4 +650,6 @@ Interface *Interface::getInstance() {
     return interf;
 }
 
-
+void Interface::free() {
+    delete interf;
+}
