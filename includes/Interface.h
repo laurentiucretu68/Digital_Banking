@@ -49,4 +49,5 @@ public:
     Interface(const Interface&) = delete;
     Interface& operator=(const Interface&) = delete;
     static Interface* getInstance();
+    static void free();
 };
